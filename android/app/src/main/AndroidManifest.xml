@@ -1,9 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chatapp.baatein">
    <application
-        android:label="baatein"
+        android:label="Baatein"
         android:icon="@mipmap/ic_launcher">
         <activity
+            android:screenOrientation="sensorPortrait"
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
