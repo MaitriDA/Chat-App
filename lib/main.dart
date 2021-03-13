@@ -1,4 +1,5 @@
 import 'package:baatein/screens/homePage.dart';
+import 'package:baatein/screens/setProfile.dart';
 import 'package:baatein/utils/landingPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (context) => LandingPage(),
-          "/home": (context) => HomePage()
+          "/home": (context) => HomePage(),
+          "/setProfile": (context) => SetProfile()
         },
       ),
     );
