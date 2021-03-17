@@ -33,17 +33,19 @@ class _SetProfileState extends State<SetProfile> {
             GestureDetector(
               onTap: () {
                 _loadPicker(ImageSource.gallery);
+                // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
               },
               child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Color(0xFFB1E4155),
+                  border: Border.all(color: Color(0xFFB1E4155), width: 2),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 padding: EdgeInsets.all(20),
                 child: Center(
                     child: Text(
                   "Gallery",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(color: Color(0xFFB1E4155), fontSize: 16),
                 )),
               ),
             ),
@@ -52,9 +54,10 @@ class _SetProfileState extends State<SetProfile> {
             GestureDetector(
               onTap: () {
                 _loadPicker(ImageSource.camera);
-                Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+                // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
               },
               child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 decoration: BoxDecoration(
                   color: Color(0xFFB1E4155),
                   borderRadius: BorderRadius.circular(50),
@@ -65,6 +68,26 @@ class _SetProfileState extends State<SetProfile> {
                   "Camera",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 )),
+              ),
+            ),
+
+            //To home screen
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Color(0xFFB1E4155),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                padding: EdgeInsets.all(20),
+                child: Center(
+                    child: Text(
+                      "Home Screen",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    )),
               ),
             )
           ],

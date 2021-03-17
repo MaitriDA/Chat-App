@@ -249,7 +249,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       PrimaryButton(
                         btnText: "Login",
-                        onPressed: () {},
+                        onPressed: ()
+                          async {
+                            validateAndLogin(context);
+                            Navigator.pushNamed(context, "/setProfile");
+                          },
                       ),
                       SizedBox(
                         height: 20,
