@@ -219,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
                         myController: emailController,
                         validateFunc: (value) {
                           if (value.isEmpty) {
-                            return "Enter Email";
+                            return "Email Required";
                           } else if (!value.contains(RegExp(
                               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
                             return "Enter valid email address";
@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                         obscure: true,
                         validateFunc: (value) {
                           if (value.isEmpty) {
-                            return "Enter Password!";
+                            return "Enter Password";
                           } else if (value.length < 6) {
                             return "Password should be atleast 6 characters!";
                           }
@@ -252,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: ()
                           async {
                             validateAndLogin(context);
-                            Navigator.pushNamed(context, "/setProfile");
+                            // Navigator.pushNamed(context, "/setProfile");
                           },
                       ),
                       SizedBox(
@@ -309,6 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                         topLeft: Radius.circular(25),
                         topRight: Radius.circular(25))),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,6 +331,10 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: "Name",
                       myController: nameController,
                       keyboardType: TextInputType.name,
+                        validateFunc: (val) {
+                          if (val.isEmpty) return 'Name Required';
+                          return null;
+                        },
                     ),
                     SizedBox(
                       height: 20,
@@ -343,7 +348,7 @@ class _LoginPageState extends State<LoginPage> {
                         String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
                         RegExp regExp = new RegExp(pattern);
                         if (value.length == 0) {
-                          return 'Please enter mobile number';
+                          return 'Phone Required';
                         } else if (!regExp.hasMatch(value)) {
                           return 'Please enter valid mobile number';
                         }
@@ -359,7 +364,7 @@ class _LoginPageState extends State<LoginPage> {
                       myController: emailController,
                       validateFunc: (value) {
                         if (value.isEmpty) {
-                          return "Enter Email";
+                          return "Email Required";
                         } else if (!value.contains(RegExp(
                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
                           return "Enter valid email address";
@@ -377,7 +382,7 @@ class _LoginPageState extends State<LoginPage> {
                       myController: passwordController,
                       validateFunc: (value) {
                         if (value.isEmpty) {
-                          return "Enter Password!";
+                          return "Enter Password";
                         } else if (value.length < 6) {
                           return "Password should be atleast 6 characters!";
                         }
@@ -393,7 +398,7 @@ class _LoginPageState extends State<LoginPage> {
                         obscure: true,
                         myController: confirmpassController,
                         validateFunc: (val) {
-                          if (val.isEmpty) return 'Empty';
+                          if (val.isEmpty) return 'Enter Password';
                           if (val != passwordController.text) return 'Not Match';
                           return null;
                         }),
@@ -406,7 +411,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       onTap: () async {
                         validateAndSignUp(context);
-                        Navigator.pushNamed(context, "/setProfile");
+                        // Navigator.pushNamed(context, "/setProfile");
                       },
 
                     ),
@@ -579,16 +584,20 @@ class _InputWithIconState extends State<InputWithIcon> {
                 color: Colors.grey.shade500,
               )),
           Expanded(
-            child: TextFormField(
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 20),
-                  border: InputBorder.none,
-                  hintText: widget.hintText),
-              autocorrect: false,
-              controller: widget.myController,
-              validator: widget.validateFunc,
-              obscureText: widget.obscure ?? false,
-              keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
+            child: SizedBox(
+              height: 50,
+              child: TextFormField(
+                decoration: InputDecoration(
+                    errorStyle: TextStyle(fontSize: 9,),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    border: InputBorder.none,
+                    hintText: widget.hintText),
+                autocorrect: false,
+                controller: widget.myController,
+                validator: widget.validateFunc,
+                obscureText: widget.obscure ?? false,
+                keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
+              ),
             ),
           ),
         ],
@@ -616,7 +625,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           color: Color(0xFFB1E4155),
           borderRadius: BorderRadius.circular(50),
         ),
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(15),
         child: Center(
             child: Text(
           widget.btnText,
@@ -642,7 +651,7 @@ class _OutlineBtnState extends State<OutlineBtn> {
       decoration: BoxDecoration(
           border: Border.all(color: Color(0xFFB1E4155), width: 2),
           borderRadius: BorderRadius.circular(50)),
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(15),
       child: Center(
           child: Text(
         widget.btnText,
