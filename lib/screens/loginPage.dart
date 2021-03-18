@@ -267,11 +267,9 @@ class _LoginPageState extends State<LoginPage> {
                               var authUser = await authServiceProvider.signInWithGoogle();
                               await _createFirebaseDocument(authUser);
                               print("Users Logged In");
-                              Navigator.push(
-                                context,
+                              Navigator.push(context,
                                 MaterialPageRoute(
-                                    builder: (_context) => HomePage()),
-                              );
+                                    builder: (_context) => HomePage()),);
                               print("login successful");
                             } catch (signUpError) {
                               print(signUpError);
@@ -458,8 +456,10 @@ class _LoginPageState extends State<LoginPage> {
             confirmpassController.text, nameController.text);
         print("User Name:::::::::::::_${authUser.displayName}_");
         await _createFirebaseDocument(authUser);
-
         print("Sign In Successful!");
+        Navigator.push(context,
+          MaterialPageRoute(
+              builder: (_context) => HomePage()),);
       } on FirebaseAuthException catch (error){
 
       }catch (e) {
@@ -469,7 +469,7 @@ class _LoginPageState extends State<LoginPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text("Error"),
-              content: Text("Some error occured!\nPlease Try Again!"),
+              content: Text("Some error occurred!\nPlease Try Again!"),
               actions: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
@@ -498,7 +498,10 @@ class _LoginPageState extends State<LoginPage> {
         await authService.signInWithEmailPassword(
             emailController.text, passwordController.text);
         print("Sign In Successful!");
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        Navigator.push(context,
+          MaterialPageRoute(
+              builder: (_context) => HomePage()),);
       } catch (e) {
         print(e);
         showDialog(
@@ -506,7 +509,7 @@ class _LoginPageState extends State<LoginPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text("Error"),
-              content: Text("Some error occured!\nPlease Try Again!"),
+              content: Text("Some error occurred!\nPlease Try Again!"),
               actions: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
