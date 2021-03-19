@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:path/path.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class SetProfile extends StatefulWidget {
   @override
@@ -12,20 +16,27 @@ class SetProfile extends StatefulWidget {
 class _SetProfileState extends State<SetProfile> {
   File _pickedImage;
   final ImagePicker _picker = ImagePicker();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 8,
+        backgroundColor: Color(0xFFB0C2637),
+        title: Text("My Profile",
+          style: TextStyle(
+            fontSize: 20,
+          ),),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: (){},
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
-              "My Profile",
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
+          children: <Widget>[
             Container(
               padding: EdgeInsets.all(7),
               decoration: new BoxDecoration(
@@ -37,13 +48,14 @@ class _SetProfileState extends State<SetProfile> {
               ),
               child: CircleAvatar(
                 radius: 100.0,
-                backgroundImage: _pickedImage==null?AssetImage("assets/images/profile.png"):FileImage(File(_pickedImage.path))
+                backgroundImage: _pickedImage==null?AssetImage("assets/images/noprofile.png"):FileImage(File(_pickedImage.path))
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   GestureDetector(
+                    onTap: (){},
                     child: CircleAvatar(
                         radius: 35.0,
                         backgroundImage: AssetImage("assets/images/avatar.jpg"),
@@ -78,7 +90,7 @@ class _SetProfileState extends State<SetProfile> {
                         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           border: Border.all(color: Color(0xFFB1E4155), width: 2),
-                          borderRadius: BorderRadius.circular(50),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 35),
                         child: Center(
@@ -97,7 +109,7 @@ class _SetProfileState extends State<SetProfile> {
                         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           border: Border.all(color: Color(0xFFB1E4155), width: 2),
-                          borderRadius: BorderRadius.circular(50),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 35),
                         child: Center(
@@ -109,25 +121,6 @@ class _SetProfileState extends State<SetProfile> {
                     ),
                   ],
                 ),
-                //To home screen
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop (context);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFB1E4155),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: EdgeInsets.all(20),
-                    child: Center(
-                        child: Text(
-                          "Back",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        )),
-                  ),
-                )
               ],
             ),
             // Get Image from Camera
@@ -157,22 +150,12 @@ class _SetProfileState extends State<SetProfile> {
       setState(() {
         _pickedImage = croppedImage;
       });
-
     } else {
       showDialog(
-        context: context,
         builder: (builder) => AlertDialog(
           title: Text("Error"),
           content: Text("We were unable to get the image."),
           elevation: 5,
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Try Again"),
-            )
-          ],
         ),
       );
     }

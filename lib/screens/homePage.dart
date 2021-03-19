@@ -1,4 +1,5 @@
 import 'package:baatein/authentication/authService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:baatein/utils/message_model.dart';
@@ -35,20 +36,22 @@ class _HomePageState extends State<HomePage> {
                   Column(
                     children: <Widget>[
                       Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
+                        padding: EdgeInsets.all(7),
+                        decoration: new BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.teal),
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/avatar.jpg'),
-                            fit: BoxFit.fill,
+                          border: new Border.all(
+                            color: Colors.black,
+                            width: 2.0,
                           ),
+                        ),
+                        child: CircleAvatar(
+                            radius: 100.0,
+                            backgroundImage: authUser.currentUser().photoUrl==null?AssetImage("assets/images/noprofile.png"):NetworkImage(authUser.currentUser().photoUrl),
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                        child: Text('CURRENT USER NAME',
+                        child: Text(authUser.currentUser().displayName,
                           style: TextStyle(
                             letterSpacing: 2,
                           ),),
