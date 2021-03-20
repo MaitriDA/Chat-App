@@ -41,3 +41,57 @@ List<Message> chats = [
     unread: false,
   ),
 ];
+
+// EXAMPLE MESSAGES IN CHAT SCREEN
+List<Message> messages = [
+  Message(
+    sender: xyz,
+    time: '5:30 PM',
+    text: 'Hey dude!',
+    unread: true,
+  ),
+  Message(
+    sender: currentUser,
+    time: '4:30 PM',
+    text:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut',
+    unread: true,
+  ),
+  Message(
+    sender: xyz,
+    time: '3:45 PM',
+    text: 'consectetur adipiscing elit, sed do eiusmod tempor incididunt ut',
+    unread: true,
+  ),
+  Message(
+    sender: xyz,
+    time: '3:15 PM',
+    text:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut',
+    unread: true,
+  ),
+  Message(
+    sender: currentUser,
+    time: '3:00 PM',
+    text: 'Lorem ipsum dolor sit amet',
+    unread: true,
+  ),
+  Message(
+    sender: currentUser,
+    time: '2:30 PM',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing ',
+    unread: true,
+  ),
+  Message(
+    sender: currentUser,
+    time: '2:30 PM',
+    text: 'Yes!',
+    unread: true,
+  ),
+  Message(
+    sender: xyz,
+    time: '2:00 PM',
+    text: 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut',
+    unread: true,
+  ),
+];

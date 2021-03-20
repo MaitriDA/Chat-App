@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:baatein/utils/message_model.dart';
 import 'setProfile.dart';
+import 'package:baatein/screens//chat_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -163,90 +164,100 @@ class _HomePageState extends State<HomePage> {
         },
         itemBuilder: (BuildContext context, int index) {
           final Message chat = chats[index];
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Row(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 3,
-                          )
-                        ]
+          return GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChatScreen(
+                  user: chat.sender,
+                ),
+              ),
+            ),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                            )
+                          ]
+                      ),
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage(chat.sender.photoUrl),
+                      ),
                     ),
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage(chat.sender.photoUrl),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.7,
-                    padding: EdgeInsets.only(left: 20,),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Text(chat.sender.displayName,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,),
-                                chat.sender.isOnline ?
-                                Container(
-                                  margin: EdgeInsets.only(left: 5),
-                                  width: 5,
-                                  height: 5,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.greenAccent[700],
-                                  ),
-                                )
-                                    :
-                                Container(child: null,)
-                              ],
-                            ),
-                            Text(chat.time,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black54,
-                              ),)
-                          ],
-                        ),
-                        SizedBox(height: 5,),
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            chat.text,
-                            style: chat.unread ? TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black54,
-                            ) :
-                            TextStyle(
-                              fontSize: 13,
-                              color: Colors.black54,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                    Container(
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.7,
+                      padding: EdgeInsets.only(left: 20,),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text(chat.sender.displayName,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,),
+                                  chat.sender.isOnline ?
+                                  Container(
+                                    margin: EdgeInsets.only(left: 5),
+                                    width: 5,
+                                    height: 5,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.greenAccent[700],
+                                    ),
+                                  )
+                                      :
+                                  Container(child: null,)
+                                ],
+                              ),
+                              Text(chat.time,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black54,
+                                ),)
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ]
+                          SizedBox(height: 5,),
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              chat.text,
+                              style: chat.unread ? TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black54,
+                              ) :
+                              TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ]
+              ),
             ),
           );
         },),
