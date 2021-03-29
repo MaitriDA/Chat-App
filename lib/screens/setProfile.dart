@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'homePage.dart';
 import 'dart:io';
 
 class SetProfile extends StatefulWidget {
@@ -9,8 +10,6 @@ class SetProfile extends StatefulWidget {
 }
 
 class _SetProfileState extends State<SetProfile> {
-  File _pickedImage;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +51,6 @@ class _SetProfileState extends State<SetProfile> {
             GestureDetector(
               onTap: () {
                 _loadPicker(ImageSource.camera);
-                Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -75,24 +73,28 @@ class _SetProfileState extends State<SetProfile> {
 
   _loadPicker(ImageSource source) async {
     PickedFile pickedFile = await ImagePicker().getImage(
-      source: ImageSource.camera,
+      source: source,
     );
     if (pickedFile != null) {
-      _cropImage(pickedFile);
+      _cropImageAndGoToHome(pickedFile);
     }
   }
 
-  _cropImage(PickedFile pickedFile) async {
+  _cropImageAndGoToHome(PickedFile pickedFile) async {
     File croppedImage = await ImageCropper.cropImage(
         maxHeight: 512,
         maxWidth: 512,
         sourcePath: pickedFile.path,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1));
     if (croppedImage != null) {
-      setState(() {
-        _pickedImage = croppedImage;
-      });
-
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => HomePage(
+                  imageFile: croppedImage,
+                )),
+        ModalRoute.withName('/home'),
+      );
     } else {
       showDialog(
         context: context,

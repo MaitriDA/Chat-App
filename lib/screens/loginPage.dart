@@ -1,11 +1,9 @@
 import 'package:baatein/authentication/authService.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'homePage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +12,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // Declaring Necessary Variables
   int _pagestate = 0;
 
   final formKey = GlobalKey<FormState>();
@@ -36,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
+    // Clean up the controllers when the widget is disposed.
     emailController.dispose();
     passwordController.dispose();
     confirmpassController.dispose();
@@ -47,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Size of the Screen
     windowHeight = MediaQuery.of(context).size.height;
     windowWidth = MediaQuery.of(context).size.width;
 
@@ -95,15 +95,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (_pagestate == 2) {
-                                _pagestate = 1;
-                              } else {
-                                _pagestate = 0;
-                              }
-                            });
-                          },
                           child: SafeArea(
                             child: Container(
                               alignment: Alignment.topLeft,
@@ -114,6 +105,15 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              if (_pagestate == 2) {
+                                _pagestate = 1;
+                              } else {
+                                _pagestate = 0;
+                              }
+                            });
+                          },
                         ),
                         AnimatedContainer(
                           curve: Curves.fastLinearToSlowEaseIn,
@@ -152,15 +152,6 @@ class _LoginPageState extends State<LoginPage> {
                       Container(
                         color: Colors.white,
                         child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (_pagestate != 0) {
-                                _pagestate = 0;
-                              } else {
-                                _pagestate = 1;
-                              }
-                            });
-                          },
                           child: Container(
                             margin: EdgeInsets.symmetric(
                                 vertical: 40, horizontal: 32),
@@ -179,6 +170,15 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              if (_pagestate != 0) {
+                                _pagestate = 0;
+                              } else {
+                                _pagestate = 1;
+                              }
+                            });
+                          },
                         ),
                       ),
                     ],
@@ -249,18 +249,24 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       PrimaryButton(
                         btnText: "Login",
-                        onPressed: () {},
+                        onPressed: () {
+                          // Logging In the user
+                          validateAndLogin(context);
+                        },
                       ),
                       SizedBox(
                         height: 20,
                       ),
                       PrimaryButton(
-                        btnText: "Continue with Google",
+                          btnText: "Continue with Google",
                           onPressed: () async {
+                            // Signing the User with Google
                             final authServiceProvider =
-                            Provider.of<AuthService>(context, listen: false);
+                                Provider.of<AuthService>(context,
+                                    listen: false);
                             try {
-                              var authUser = await authServiceProvider.signInWithGoogle();
+                              var authUser =
+                                  await authServiceProvider.signInWithGoogle();
                               await _createFirebaseDocument(authUser);
                               print("Users Logged In");
                               Navigator.push(
@@ -272,20 +278,19 @@ class _LoginPageState extends State<LoginPage> {
                             } catch (signUpError) {
                               print(signUpError);
                             }
-                          }
-                      ),
+                          }),
                       SizedBox(
                         height: 20,
                       ),
                       GestureDetector(
+                        child: OutlineBtn(
+                          btnText: "Create New Account",
+                        ),
                         onTap: () {
                           setState(() {
                             _pagestate = 2;
                           });
                         },
-                        child: OutlineBtn(
-                          btnText: "Create New Account",
-                        ),
                       ),
                     ],
                   ),
@@ -390,7 +395,8 @@ class _LoginPageState extends State<LoginPage> {
                         myController: confirmpassController,
                         validateFunc: (val) {
                           if (val.isEmpty) return 'Empty';
-                          if (val != passwordController.text) return 'Not Match';
+                          if (val != passwordController.text)
+                            return 'Not Match';
                           return null;
                         }),
                     SizedBox(
@@ -404,7 +410,6 @@ class _LoginPageState extends State<LoginPage> {
                         validateAndSignUp(context);
                         Navigator.pushNamed(context, "/setProfile");
                       },
-
                     ),
                     SizedBox(
                       height: 20,
@@ -449,11 +454,8 @@ class _LoginPageState extends State<LoginPage> {
             confirmpassController.text, nameController.text);
         print("User Name:::::::::::::_${authUser.displayName}_");
         await _createFirebaseDocument(authUser);
-
         print("Sign In Successful!");
-      } on FirebaseAuthException catch (error){
-
-      }catch (e) {
+      } catch (e) {
         print(e);
         showDialog(
           context: context,
@@ -482,7 +484,7 @@ class _LoginPageState extends State<LoginPage> {
   // logging In
   void validateAndLogin(BuildContext _context) async {
     final authServiceProvider =
-    Provider.of<AuthService>(_context, listen: false);
+        Provider.of<AuthService>(_context, listen: false);
     final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
       try {
@@ -515,8 +517,6 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
-
-
 
   Future<void> _createFirebaseDocument(UserCredentials authUser) async {
     final usersRef =
