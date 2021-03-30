@@ -1,11 +1,12 @@
 import 'package:baatein/authentication/authService.dart';
+import 'package:baatein/screens/todoScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:baatein/utils/message_model.dart';
 import 'setProfile.dart';
-import 'package:baatein/screens//chat_screen.dart';
+import 'package:baatein/screens/chat_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({this.imageFile});
@@ -88,9 +89,16 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ToDoList()),
+                          );
+                        },
                         leading: Icon(Icons.star_border),
                         title: Text(
-                          'Personal Space',
+                          'What To-Do?',
                           style: TextStyle(
                               letterSpacing: 1, color: Colors.black54),
                         ),

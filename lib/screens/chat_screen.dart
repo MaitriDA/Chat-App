@@ -19,7 +19,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
 
-  _chatBubble(UserCredentials authUser, Message message, bool isMe, bool isSameUser) {
+  _chatBubble(
+      UserCredentials authUser, Message message, bool isMe, bool isSameUser) {
     if (isMe) {
       return Column(
         children: <Widget>[
@@ -51,41 +52,37 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-          !isSameUser
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      message.time,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.black45,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: 12,
-                        backgroundImage: NetworkImage(authUser.photoUrl),
-                      ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                message.time,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.black45,
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
                     ),
                   ],
-                )
-              : Container(
-                  child: null,
                 ),
+                child: CircleAvatar(
+                  radius: 12,
+                  backgroundImage: NetworkImage(authUser.photoUrl),
+                ),
+              ),
+            ],
+          )
         ],
       );
     } else {
@@ -286,7 +283,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         final bool isSameUser =
                             prevUserId == messages[index]["sender"];
                         prevUserId = messages[index]["sender"];
-                        return _chatBubble( authUser, message, isMe, isSameUser);
+                        return _chatBubble(authUser, message, isMe, isSameUser);
                       },
                     ),
                   );
