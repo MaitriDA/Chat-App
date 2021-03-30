@@ -86,8 +86,8 @@ class _SetProfileState extends State<SetProfile> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () {}
+              icon: Icon(Icons.check),
+              onPressed: () {}
           ),
         ],
       ),
@@ -191,14 +191,5 @@ class _SetProfileState extends State<SetProfile> {
         context: null,
       );
     }
-  }
-
-  Future<void> updateProfilePic(UserCredentials authUser) async {
-    FirebaseFirestore.instance.collection("Users").doc(authUser.email).update(
-        {"photoUrl":_pickedImage},)
-        .then((value) => print("Field updated"))
-        .catchError((error) =>
-        print(
-            "Failed: $error"));
   }
 }
