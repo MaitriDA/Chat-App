@@ -501,18 +501,21 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _createFirebaseDocument(UserCredentials authUser) async {
     final usersRef =
         FirebaseFirestore.instance.collection('Users').doc(authUser.email);
-    usersRef.get().then((docSnapshot) => {
+    usersRef.get().then((docSnapshot){
           if (!docSnapshot.exists)
             {
+              var photo_url = authUser.photoUrl ??
+                  "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
               usersRef
                   .set({
                     "name": authUser.displayName,
                     "email": authUser.email,
                     "phone": phoneController.text,
+                    "photo_url": photo_url
                   })
                   .then((value) => print("User's Document Added"))
                   .catchError((error) => print(
-                      "Failed to add user: $error")) // create the document
+                      "Failed to add user: $error"));// create the document
             }
         });
   }
