@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: 100.0,
+                        radius: 70.0,
                         backgroundImage: authUser.currentUser().photoUrl == null
                             ? AssetImage("assets/images/noprofile.png")
                             : NetworkImage(authUser.currentUser().photoUrl),
