@@ -20,7 +20,10 @@ class MyApp extends StatelessWidget {
       create: (_) => FirebaseAuthService(),
       dispose: (_, AuthService authService) => authService.dispose(),
       child: MaterialApp(
-        theme: ThemeData(fontFamily: "Montserrat"),
+        theme: ThemeData(
+            primaryColor: Color(0xFF0C2637),
+            fontFamily: "Montserrat",
+        ),
         initialRoute: "/",
         routes: {
           "/": (context) => LandingPage(),

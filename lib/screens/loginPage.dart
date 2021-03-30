@@ -219,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
                         myController: emailController,
                         validateFunc: (value) {
                           if (value.isEmpty) {
-                            return "Enter Email";
+                            return "Email Required";
                           } else if (!value.contains(RegExp(
                               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
                             return "Enter valid email address";
@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                         obscure: true,
                         validateFunc: (value) {
                           if (value.isEmpty) {
-                            return "Enter Password!";
+                            return "Enter Password";
                           } else if (value.length < 6) {
                             return "Password should be atleast 6 characters!";
                           }
@@ -249,10 +249,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       PrimaryButton(
                         btnText: "Login",
-                        onPressed: () {
-                          // Logging In the user
-                          validateAndLogin(context);
-                        },
+                        onPressed: ()
+                          async {
+                            validateAndLogin(context);
+                            // Navigator.pushNamed(context, "/setProfile");
+                          },
                       ),
                       SizedBox(
                         height: 20,
@@ -269,11 +270,9 @@ class _LoginPageState extends State<LoginPage> {
                                   await authServiceProvider.signInWithGoogle();
                               await _createFirebaseDocument(authUser);
                               print("Users Logged In");
-                              Navigator.push(
-                                context,
+                              Navigator.push(context,
                                 MaterialPageRoute(
-                                    builder: (_context) => HomePage()),
-                              );
+                                    builder: (_context) => HomePage()),);
                               print("login successful");
                             } catch (signUpError) {
                               print(signUpError);
@@ -310,6 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                         topLeft: Radius.circular(25),
                         topRight: Radius.circular(25))),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -331,6 +331,10 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: "Name",
                       myController: nameController,
                       keyboardType: TextInputType.name,
+                        validateFunc: (val) {
+                          if (val.isEmpty) return 'Name Required';
+                          return null;
+                        },
                     ),
                     SizedBox(
                       height: 20,
@@ -344,7 +348,7 @@ class _LoginPageState extends State<LoginPage> {
                         String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
                         RegExp regExp = new RegExp(pattern);
                         if (value.length == 0) {
-                          return 'Please enter mobile number';
+                          return 'Phone Required';
                         } else if (!regExp.hasMatch(value)) {
                           return 'Please enter valid mobile number';
                         }
@@ -360,7 +364,7 @@ class _LoginPageState extends State<LoginPage> {
                       myController: emailController,
                       validateFunc: (value) {
                         if (value.isEmpty) {
-                          return "Enter Email";
+                          return "Email Required";
                         } else if (!value.contains(RegExp(
                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
                           return "Enter valid email address";
@@ -378,7 +382,7 @@ class _LoginPageState extends State<LoginPage> {
                       myController: passwordController,
                       validateFunc: (value) {
                         if (value.isEmpty) {
-                          return "Enter Password!";
+                          return "Enter Password";
                         } else if (value.length < 6) {
                           return "Password should be atleast 6 characters!";
                         }
@@ -397,6 +401,8 @@ class _LoginPageState extends State<LoginPage> {
                           if (val.isEmpty) return 'Empty';
                           if (val != passwordController.text)
                             return 'Not Match';
+                          if (val.isEmpty) return 'Enter Password';
+                          if (val != passwordController.text) return 'Not Match';
                           return null;
                         }),
                     SizedBox(
@@ -408,7 +414,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       onTap: () async {
                         validateAndSignUp(context);
-                        Navigator.pushNamed(context, "/setProfile");
+                        // Navigator.pushNamed(context, "/setProfile");
                       },
                     ),
                     SizedBox(
@@ -449,35 +455,6 @@ class _LoginPageState extends State<LoginPage> {
         Provider.of<AuthService>(_context, listen: false);
     final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
-      try {
-        var authUser = await authService.createUser(emailController.text,
-            confirmpassController.text, nameController.text);
-        print("User Name:::::::::::::_${authUser.displayName}_");
-        await _createFirebaseDocument(authUser);
-        print("Sign In Successful!");
-      } catch (e) {
-        print(e);
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Error"),
-              content: Text("Some error occured!\nPlease Try Again!"),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  child: TextButton(
-                    child: Text("Try Again"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      }
     }
   }
 
@@ -491,7 +468,10 @@ class _LoginPageState extends State<LoginPage> {
         await authService.signInWithEmailPassword(
             emailController.text, passwordController.text);
         print("Sign In Successful!");
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        Navigator.push(context,
+          MaterialPageRoute(
+              builder: (_context) => HomePage()),);
       } catch (e) {
         print(e);
         showDialog(
@@ -499,7 +479,7 @@ class _LoginPageState extends State<LoginPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text("Error"),
-              content: Text("Some error occured!\nPlease Try Again!"),
+              content: Text("Some error occurred!\nPlease Try Again!"),
               actions: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
@@ -575,16 +555,20 @@ class _InputWithIconState extends State<InputWithIcon> {
                 color: Colors.grey.shade500,
               )),
           Expanded(
-            child: TextFormField(
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 20),
-                  border: InputBorder.none,
-                  hintText: widget.hintText),
-              autocorrect: false,
-              controller: widget.myController,
-              validator: widget.validateFunc,
-              obscureText: widget.obscure ?? false,
-              keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
+            child: SizedBox(
+              height: 50,
+              child: TextFormField(
+                decoration: InputDecoration(
+                    errorStyle: TextStyle(fontSize: 9,),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    border: InputBorder.none,
+                    hintText: widget.hintText),
+                autocorrect: false,
+                controller: widget.myController,
+                validator: widget.validateFunc,
+                obscureText: widget.obscure ?? false,
+                keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
+              ),
             ),
           ),
         ],
@@ -612,7 +596,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           color: Color(0xFFB1E4155),
           borderRadius: BorderRadius.circular(50),
         ),
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(15),
         child: Center(
             child: Text(
           widget.btnText,
@@ -638,7 +622,7 @@ class _OutlineBtnState extends State<OutlineBtn> {
       decoration: BoxDecoration(
           border: Border.all(color: Color(0xFFB1E4155), width: 2),
           borderRadius: BorderRadius.circular(50)),
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(15),
       child: Center(
           child: Text(
         widget.btnText,
