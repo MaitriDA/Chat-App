@@ -81,32 +81,38 @@ class _ToDoListState extends State<ToDoList> {
                                 height: 50,
                               ),
                               ElevatedButton(
-                                  onPressed: () async {
-                                    final authServiceProvider =
-                                    Provider.of<AuthService>(context, listen: false);
-                                    final authService = authServiceProvider.getCurrentUser();
-                                    var task_tilte = taskTitleController.text;
-                                    var task_description = taskDescriptionController.text;
-                                    setState(() {
-                                      taskTitleController.clear();
-                                      taskDescriptionController.clear();
-                                    });
-                                    if (task_tilte != "") {
-                                      await FirebaseFirestore.instance
-                                          .collection("Users")
-                                          .doc(authService.currentUser().email)
-                                          .update({
-                                        "to-do": FieldValue.arrayUnion([
-                                          {
-                                            "task_tilte": task_tilte,
-                                            "task_description": task_description,
-                                            "task_time": DateTime.now(),
-                                            "task_completion": isComplete,
-                                          }
-                                        ])
-                                      });
-                                    }
-                                  },
+                                  // onPressed: () async {
+                                  //   final authServiceProvider =
+                                  //   Provider.of<AuthService>(context, listen: false);
+                                  //   final authService = authServiceProvider.getCurrentUser();
+                                  //   var task_tilte = taskTitleController.text;
+                                  //   var task_description = taskDescriptionController.text;
+                                  //   setState(() {
+                                  //     taskTitleController.clear();
+                                  //     taskDescriptionController.clear();
+                                  //   });
+                                  //   if (task_tilte != "") {
+                                  //     await FirebaseFirestore.instance
+                                  //         .collection("Users")
+                                  //         .doc(authService.currentUser().email)
+                                  //         .update({
+                                  //       "to-do": FieldValue.arrayUnion([
+                                  //         {
+                                  //           "task_tilte": task_tilte,
+                                  //           "task_description": task_description,
+                                  //           "task_time": DateTime.now(),
+                                  //           "task_completion": isComplete,
+                                  //         }
+                                  //       ])
+                                  //     });
+                                  //   }
+                                  // },
+                                onPressed: (){
+                                  if(taskTitleController.text.isNotEmpty){
+                                    print(taskTitleController.text);
+                                    print(taskDescriptionController.text);
+                                  }
+                                },
                                   child: Text("Done"),
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
