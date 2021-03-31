@@ -85,10 +85,7 @@ class _SetProfileState extends State<SetProfile> {
           ),
         ),
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () {}
-          ),
+          IconButton(icon: Icon(Icons.check), onPressed: () {}),
         ],
       ),
       body: Center(
@@ -110,51 +107,142 @@ class _SetProfileState extends State<SetProfile> {
                       ? AssetImage("assets/images/noprofile.png")
                       : FileImage(File(_pickedImage.path))),
             ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {},
-                    child: CircleAvatar(
-                      radius: 35.0,
-                      backgroundImage: AssetImage("assets/images/avatar.jpg"),
-                    ),
-                  ),
-                  GestureDetector(
-                    child: CircleAvatar(
-                      radius: 35.0,
-                      backgroundImage: AssetImage("assets/images/avatar2.jpg"),
-                    ),
-                  ),
-                  GestureDetector(
-                    child: CircleAvatar(
-                      radius: 35.0,
-                      backgroundImage: AssetImage("assets/images/avatar3.png"),
-                    ),
-                  ),
-                ]),
-            GestureDetector(
-              onTap: () {
-                _loadPicker(ImageSource.gallery);
-              },
-              child: GestureDetector(
-                onTap: () => customImageOptions(),
-                child: Container(
-                  margin: EdgeInsets.all(30),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xFFB1E4155), width: 2),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 35),
-                  child: Center(
-                      child: Text(
-                        "Choose custom image",
-                        style: TextStyle(
-                            color: Color(0xFFB1E4155), fontSize: 16),
-                      )),
+            Column(
+              children: [
+                Center(
+                  child: Text("AVATARS",
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        letterSpacing: 1,
+                        fontSize: 12,
+                    height: 5),),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: Colors.black,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                              AssetImage("assets/images/avatar1.jpg"),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: Colors.black,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                              AssetImage("assets/images/avatar2.jpg"),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: Colors.black,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                              AssetImage("assets/images/avatar3.jpg"),
+                            ),
+                          ),
+                        ),
+                      ]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: Colors.black,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                              AssetImage("assets/images/avatar4.jpg"),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: Colors.black,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                              AssetImage("assets/images/avatar5.jpg"),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: new Border.all(
+                                color: Colors.black,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                              AssetImage("assets/images/avatar6.jpg"),
+                            ),
+                          ),
+                        ),
+                      ]),
+                ),
+                TextButton(onPressed: () => customImageOptions(),
+                    child: Text("OR CHOOSE CUSTOM IMAGE",
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          letterSpacing: 1,
+                          fontSize: 12),))
+              ],
             ),
+
+
           ],
         ),
       ),
@@ -182,12 +270,11 @@ class _SetProfileState extends State<SetProfile> {
       });
     } else {
       showDialog(
-        builder: (builder) =>
-            AlertDialog(
-              title: Text("Error"),
-              content: Text("We were unable to get the image."),
-              elevation: 5,
-            ),
+        builder: (builder) => AlertDialog(
+          title: Text("Error"),
+          content: Text("We were unable to get the image."),
+          elevation: 5,
+        ),
         context: null,
       );
     }

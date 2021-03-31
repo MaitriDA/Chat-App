@@ -1,5 +1,10 @@
+import 'package:baatein/authentication/authService.dart';
+import 'package:baatein/utils/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ToDoList extends StatefulWidget {
   @override
@@ -7,8 +12,9 @@ class ToDoList extends StatefulWidget {
 }
 
 class _ToDoListState extends State<ToDoList> {
-  var check_box_state = Icons.check_box_outline_blank_sharp;
-  var check_text_state = null;
+  bool isComplete = false;
+  TextEditingController taskTitleController = TextEditingController();
+  TextEditingController taskDescriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +52,7 @@ class _ToDoListState extends State<ToDoList> {
                             children: [
                               Divider(),
                               TextFormField(
+                                controller: taskTitleController,
                                 textCapitalization: TextCapitalization.words,
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500),
@@ -59,7 +66,9 @@ class _ToDoListState extends State<ToDoList> {
                                 height: 30,
                               ),
                               TextFormField(
-                                textCapitalization: TextCapitalization.sentences,
+                                controller: taskDescriptionController,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.w300),
                                 decoration: InputDecoration(
@@ -72,7 +81,32 @@ class _ToDoListState extends State<ToDoList> {
                                 height: 50,
                               ),
                               ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    final authServiceProvider =
+                                    Provider.of<AuthService>(context, listen: false);
+                                    final authService = authServiceProvider.getCurrentUser();
+                                    var task_tilte = taskTitleController.text;
+                                    var task_description = taskDescriptionController.text;
+                                    setState(() {
+                                      taskTitleController.clear();
+                                      taskDescriptionController.clear();
+                                    });
+                                    if (task_tilte != "") {
+                                      await FirebaseFirestore.instance
+                                          .collection("Users")
+                                          .doc(authService.currentUser().email)
+                                          .update({
+                                        "to-do": FieldValue.arrayUnion([
+                                          {
+                                            "task_tilte": task_tilte,
+                                            "task_description": task_description,
+                                            "task_time": DateTime.now(),
+                                            "task_completion": isComplete,
+                                          }
+                                        ])
+                                      });
+                                    }
+                                  },
                                   child: Text("Done"),
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
@@ -102,38 +136,37 @@ class _ToDoListState extends State<ToDoList> {
           margin: EdgeInsets.all(10),
           padding: EdgeInsets.all(25),
           color: Color(0xFFBFEEFEC),
-          child: ListView.builder(
+          child: ListView.separated(
+              separatorBuilder: (context, index) => Divider(
+                    color: Colors.grey,
+                  ),
               shrinkWrap: true,
               itemCount: 5,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading: GestureDetector(
-                      onTap: () {
-                        if (check_box_state ==
-                            Icons.check_box_outline_blank_sharp) {
-                          setState(() {
-                            check_box_state = Icons.check_box_sharp;
-                            check_text_state = TextDecoration.lineThrough;
-                          });
-                        } else {
-                          setState(() {
-                            check_box_state =
-                                Icons.check_box_outline_blank_sharp;
-                            check_text_state = null;
-                          });
-                        }
-                        ;
-                      },
-                      child: Icon(
-                        check_box_state,
-                        size: 22,
-                        color: Colors.black87,
-                      )),
+                  onTap: () {
+                    setState(() {
+                      isComplete = !isComplete;
+                    });
+                  },
+                  leading: isComplete
+                      ? Icon(
+                          Icons.check_box_outlined,
+                          size: 22,
+                          color: Colors.black87,
+                        )
+                      : Icon(
+                          Icons.check_box_outline_blank,
+                          size: 22,
+                          color: Colors.black87,
+                        ),
                   title: Text(
                     "Todo title",
-                    style: TextStyle(
-                        decoration: check_text_state,
-                        fontWeight: FontWeight.w500),
+                    style: isComplete
+                        ? TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            fontWeight: FontWeight.w500)
+                        : TextStyle(fontWeight: FontWeight.w500),
                   ),
                 );
               }),
