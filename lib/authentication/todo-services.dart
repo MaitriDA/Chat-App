@@ -22,12 +22,19 @@ class ToDoDatabaseService {
     });
   }
 
-  Future completeTask(uid) async {
-    await UsersCollection.doc(firebaseAuth.currentUser.email).update({"isComplete": true});
-  }
+  // Future completeTask(uid) async {
+  //   await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.});
+  // }
 
-  Future removeTodo(uid) async {
-    await UsersCollection.doc(firebaseAuth.currentUser.email).delete();
+  Future removeTodo(String title, String description, bool isComplete) async {
+    await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.arrayRemove([
+      {
+        "task_title": title,
+        "task_description": description,
+        "task_time": DateTime.now(),
+        "task_completion": isComplete
+      }
+    ])});
   }
 
   List<Todo> todoFromFirestore(QuerySnapshot snapshot) {
