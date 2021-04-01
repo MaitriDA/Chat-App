@@ -65,22 +65,23 @@ class _ChatScreenState extends State<ChatScreen> {
               SizedBox(
                 width: 10,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                    ),
-                  ],
-                ),
-                child: CircleAvatar(
-                  radius: 12,
-                  backgroundImage: NetworkImage(authUser.photoUrl),
-                ),
-              ),
+              //the following commented out section is throwing network images exceptions, and we dont need it anyways
+              // Container(
+              //   decoration: BoxDecoration(
+              //     shape: BoxShape.circle,
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.grey.withOpacity(0.5),
+              //         spreadRadius: 2,
+              //         blurRadius: 5,
+              //       ),
+              //     ],
+              //   ),
+              //   child: CircleAvatar(
+              //     radius: 12,
+              //     backgroundImage: NetworkImage(authUser.photoUrl),
+              //   ),
+              // ),
             ],
           )
         ],
@@ -118,22 +119,22 @@ class _ChatScreenState extends State<ChatScreen> {
           !isSameUser
               ? Row(
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: 12,
-                        backgroundImage: NetworkImage(widget.photoUrl),
-                      ),
-                    ),
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     shape: BoxShape.circle,
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: Colors.grey.withOpacity(0.5),
+                    //         spreadRadius: 2,
+                    //         blurRadius: 5,
+                    //       ),
+                    //     ],
+                    //   ),
+                    //   child: CircleAvatar(
+                    //     radius: 12,
+                    //     backgroundImage: NetworkImage(widget.photoUrl),
+                    //   ),
+                    // ),
                     SizedBox(
                       width: 10,
                     ),
@@ -234,16 +235,11 @@ class _ChatScreenState extends State<ChatScreen> {
         title: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            children: [
-              TextSpan(
-                text: widget.user,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              TextSpan(text: '\n'),
-            ],
+            text: widget.user,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
         leading: IconButton(

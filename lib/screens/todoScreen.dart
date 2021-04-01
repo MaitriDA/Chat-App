@@ -1,10 +1,7 @@
-import 'package:baatein/authentication/authService.dart';
-import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:baatein/utils/todo_model.dart';
 import 'package:baatein/authentication/todo-services.dart';
 
@@ -15,7 +12,8 @@ class ToDoList extends StatefulWidget {
 
 class _ToDoListState extends State<ToDoList> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  CollectionReference UsersCollection = FirebaseFirestore.instance.collection("Users");
+  CollectionReference UsersCollection =
+      FirebaseFirestore.instance.collection("Users");
   bool isComplete = false;
   TextEditingController taskTitleController = TextEditingController();
   TextEditingController taskDescriptionController = TextEditingController();
@@ -86,9 +84,16 @@ class _ToDoListState extends State<ToDoList> {
                               ),
                               ElevatedButton(
                                   onPressed: () async {
+                                    var title = taskTitleController.text;
+                                    var descript =
+                                        taskDescriptionController.text;
                                     if (taskTitleController.text.isNotEmpty) {
-                                      await ToDoDatabaseService()
-                                          .createTodo(taskTitleController.text, taskDescriptionController.text, isComplete);
+                                      await ToDoDatabaseService().createTodo(
+                                          title, descript, isComplete);
+                                      setState(() {
+                                        taskTitleController.clear();
+                                        taskDescriptionController.clear();
+                                      });
                                       Navigator.pop(context);
                                     }
                                   },
@@ -116,68 +121,94 @@ class _ToDoListState extends State<ToDoList> {
                 }),
           ],
         ),
-        body: StreamBuilder<List<Todo>>(
-            stream: ToDoDatabaseService().listTodos(),
-            builder: (BuildContext context, snapshot) {
-              List<Todo> todos = snapshot.data;
-              if(!snapshot.hasData){
-                return Center(
-                  child: CircularProgressIndicator(),
+        body: StreamBuilder(
+            // stream: ToDoDatabaseService().listTodos(),
+            // builder: (BuildContext context, snapshot) {
+            //   List<Todo> todos = snapshot.data;
+            //   if(!snapshot.hasData){
+            //     return Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   }
+            stream: FirebaseFirestore.instance.collection("Users").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                // Fetching the data
+                final List<DocumentSnapshot> documents = snapshot.data.docs;
+
+                var todos = documents.map((doc) {
+                  return Todo(
+                    isComplete: doc.data()["task_completion"],
+                    task_title: doc.data()["task_title"],
+                    task_description: doc.data()["task_description"],
+                    task_time: doc.data()["task_time"],
+                  );
+                }).toList();
+                return Container(
+                  height: MediaQuery.of(context).size.height,
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(25),
+                  color: Color(0xFFBFEEFEC),
+                  child: ListView.separated(
+                      separatorBuilder: (context, index) => Divider(
+                            color: Colors.grey,
+                          ),
+                      shrinkWrap: true,
+                      itemCount: todos.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          onTap: () {
+                            setState(() {
+                              isComplete = !isComplete;
+                            });
+                          },
+                          leading: isComplete
+                              ? Icon(
+                                  Icons.check_box_outlined,
+                                  size: 22,
+                                  color: Colors.black87,
+                                )
+                              : Icon(
+                                  Icons.check_box_outline_blank,
+                                  size: 22,
+                                  color: Colors.black87,
+                                ),
+                          title: Text(
+                            todos[index].task_title??'default value',
+                            style: isComplete
+                                ? TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                    fontWeight: FontWeight.w500)
+                                : TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Text(
+                            todos[index].task_description??'default value',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          trailing: IconButton(
+                            onPressed: ()async{
+                              try {
+                                await ToDoDatabaseService().removeTodo(todos.indexOf(todos[index]));
+                                print('delete successful');
+                              }catch(e){
+                                print('error in deletion');
+                              }
+                            },
+                            icon: Icon(
+                              Icons.delete_outline,
+                              size: 22,
+                              color: Colors.black87,),
+                          )
+                        );
+                      }),
                 );
               }
-              return Container(
-                height: MediaQuery.of(context).size.height,
-                margin: EdgeInsets.all(10),
-                padding: EdgeInsets.all(25),
-                color: Color(0xFFBFEEFEC),
-                child: ListView.separated(
-                    separatorBuilder: (context, index) => Divider(
-                          color: Colors.grey,
-                        ),
-                    shrinkWrap: true,
-                    itemCount: todos.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {
-                          setState(() {
-                            isComplete = !isComplete;
-                          });
-                        },
-                        leading: isComplete
-                            ? Icon(
-                                Icons.check_box_outlined,
-                                size: 22,
-                                color: Colors.black87,
-                              )
-                            : Icon(
-                                Icons.check_box_outline_blank,
-                                size: 22,
-                                color: Colors.black87,
-                              ),
-                        title: Text(
-                          todos[index].task_title,
-                          style: isComplete
-                              ? TextStyle(
-                                  decoration: TextDecoration.lineThrough,
-                                  fontWeight: FontWeight.w500)
-                              : TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        subtitle: Text(
-                      todos[index].task_description,
-                          style: TextStyle(fontWeight: FontWeight.w500),),
-                        trailing: GestureDetector(
-                          onTap: () async{
-                            await ToDoDatabaseService().removeTodo(todos[index].task_title, todos[index].task_description, todos[index].isComplete);
-                          },
-                          child: Icon(
-                            Icons.delete,
-                            size: 22,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      );
-                    }),
-              );
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text("Please check your internet connection"),
+                );
+              }
+              return Center(child: CircularProgressIndicator());
             }));
   }
 }

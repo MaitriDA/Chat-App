@@ -1,8 +1,5 @@
-import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'authService.dart';
 import 'package:baatein/utils/todo_model.dart';
 
 class ToDoDatabaseService {
@@ -26,15 +23,8 @@ class ToDoDatabaseService {
   //   await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.});
   // }
 
-  Future removeTodo(String title, String description, bool isComplete) async {
-    await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.arrayRemove([
-      {
-        "task_title": title,
-        "task_description": description,
-        "task_time": DateTime.now(),
-        "task_completion": isComplete
-      }
-    ])});
+  Future removeTodo(int i) async {
+    await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.arrayRemove(["to-do"[i]],)});
   }
 
   List<Todo> todoFromFirestore(QuerySnapshot snapshot) {
@@ -45,7 +35,6 @@ class ToDoDatabaseService {
           task_title: e.data()["task_title"],
           task_description: e.data()["task_description"],
           task_time: e.data()["task_time"],
-
         );
       }).toList();
     } else {
