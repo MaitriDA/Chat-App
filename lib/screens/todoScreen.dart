@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:baatein/utils/todo_model.dart';
 import 'package:baatein/authentication/todo-services.dart';
+import 'package:flutter/widgets.dart';
 
 class ToDoList extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _ToDoListState extends State<ToDoList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFBFEEFEC),
         appBar: AppBar(
           elevation: 8,
           backgroundColor: Color(0xFFB0C2637),
@@ -122,59 +124,107 @@ class _ToDoListState extends State<ToDoList> {
           ],
         ),
         body: StreamBuilder(
-            // stream: ToDoDatabaseService().listTodos(),
-            // builder: (BuildContext context, snapshot) {
-            //   List<Todo> todos = snapshot.data;
-            //   if(!snapshot.hasData){
-            //     return Center(
-            //       child: CircularProgressIndicator(),
-            //     );
-            //   }
-            stream: FirebaseFirestore.instance.collection("Users").snapshots(),
+            stream: FirebaseFirestore.instance.collection("Users").doc(firebaseAuth.currentUser.email).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                // Fetching the data
-                final List<DocumentSnapshot> documents = snapshot.data.docs;
-
-                var todos = documents.map((doc) {
-                  return Todo(
-                    isComplete: doc.data()["task_completion"],
-                    task_title: doc.data()["task_title"],
-                    task_description: doc.data()["task_description"],
-                    task_time: doc.data()["task_time"],
-                  );
-                }).toList();
-                return Container(
-                  height: MediaQuery.of(context).size.height,
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(25),
-                  color: Color(0xFFBFEEFEC),
-                  child: ListView.separated(
-                      separatorBuilder: (context, index) => Divider(
-                            color: Colors.grey,
-                          ),
-                      shrinkWrap: true,
-                      itemCount: todos.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
+                  var docRef = snapshot.data;
+                  var todos = docRef["to-do"];
+                return ListView.builder(
+                  reverse: true,
+                    shrinkWrap: true,
+                    itemCount: todos.length,
+                    itemBuilder: (context, index) {
+                      final Todo todo = Todo(
+                          task_title: todos[index]["task_title"],
+                          task_description: todos[index]["task_description"],
+                          task_time: todos[index]["task_time"]
+                              .toDate()
+                              .toString(),
+                          isComplete: todos[index]["task_completion"]);
+                      return Container(
+                        margin: EdgeInsets.only(left: 15, right: 15, top: 15),
+                        padding: EdgeInsets.all(5),
+                        color: Colors.white,
+                        child: ListTile(
                           onTap: () {
-                            setState(() {
-                              isComplete = !isComplete;
-                            });
-                          },
-                          leading: isComplete
-                              ? Icon(
-                                  Icons.check_box_outlined,
-                                  size: 22,
-                                  color: Colors.black87,
-                                )
-                              : Icon(
-                                  Icons.check_box_outline_blank,
-                                  size: 22,
-                                  color: Colors.black87,
+                            showDialog(
+                                context: context,
+                                builder: (_) => new SimpleDialog(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 30),
+                                  backgroundColor: Colors.grey.shade100,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  title: Center(
+                                    child: Text(
+                                      todo.task_title,
+                                      style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          letterSpacing: 1,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+                                  children: [
+                                    Divider(),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                Center(
+                                  child: Text(
+                                    todo.task_description,
+                                    overflow: TextOverflow.visible,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.black54
+                                    ),
+                                  ),
                                 ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Center(
+                                      child: Text(
+                                        todo.task_time,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w200,
+                                            color: Colors.black54
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text(
+                                          "BACK",
+                                          style: TextStyle(
+                                              color: Theme.of(context).primaryColor,
+                                              letterSpacing: 1,
+                                              fontSize: 12),
+                                        )),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width*0.5,
+                                    )
+                                  ],
+                                ));
+                          },
+                          // leading: isComplete
+                          //     ? Icon(
+                          //         Icons.check_box_outlined,
+                          //         size: 22,
+                          //         color: Colors.black87,
+                          //       )
+                          //     : Icon(
+                          //         Icons.check_box_outline_blank,
+                          //         size: 22,
+                          //         color: Colors.black87,
+                          //       ),
+                            leading: IconButton(
+                              onPressed: (){},
+                              icon: Icon(Icons.check_box_outline_blank),
+                            ),
                           title: Text(
-                            todos[index].task_title??'default value',
+                            todo.task_title??'default value',
                             style: isComplete
                                 ? TextStyle(
                                     decoration: TextDecoration.lineThrough,
@@ -182,13 +232,17 @@ class _ToDoListState extends State<ToDoList> {
                                 : TextStyle(fontWeight: FontWeight.w500),
                           ),
                           subtitle: Text(
-                            todos[index].task_description??'default value',
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                            todo.task_description??'default value',
+                            style: TextStyle(fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                           trailing: IconButton(
                             onPressed: ()async{
                               try {
-                                await ToDoDatabaseService().removeTodo(todos.indexOf(todos[index]));
+                                await ToDoDatabaseService().removeTodo(
+                                    todo.task_title, todo.task_description, todo.isComplete, todo.task_time);
                                 print('delete successful');
                               }catch(e){
                                 print('error in deletion');
@@ -199,9 +253,9 @@ class _ToDoListState extends State<ToDoList> {
                               size: 22,
                               color: Colors.black87,),
                           )
-                        );
-                      }),
-                );
+                        ),
+                      );
+                    });
               }
               if (snapshot.hasError) {
                 return Center(

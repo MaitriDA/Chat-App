@@ -23,26 +23,16 @@ class ToDoDatabaseService {
   //   await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.});
   // }
 
-  Future removeTodo(int i) async {
-    await UsersCollection.doc(firebaseAuth.currentUser.email).update({"to-do":FieldValue.arrayRemove(["to-do"[i]],)});
-  }
-
-  List<Todo> todoFromFirestore(QuerySnapshot snapshot) {
-    if (snapshot != null) {
-      return snapshot.docs.map((e) {
-        return Todo(
-          isComplete: e.data()["task_completion"],
-          task_title: e.data()["task_title"],
-          task_description: e.data()["task_description"],
-          task_time: e.data()["task_time"],
-        );
-      }).toList();
-    } else {
-      return null;
-    }
-  }
-
-  Stream<List<Todo>> listTodos() {
-    return UsersCollection.snapshots().map(todoFromFirestore);
+  Future removeTodo(String title, String description, bool isComplete, String task_time) async {
+    await UsersCollection.doc(firebaseAuth.currentUser.email).update({
+      "to-do": FieldValue.arrayRemove([
+        {
+          "task_title": title,
+          "task_description": description,
+          "task_time": task_time,
+          "task_completion": isComplete
+        }
+      ])
+    });
   }
 }
