@@ -244,8 +244,26 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                       ),
+                      TextButton(
+                        onPressed: ()async{
+                          final authServiceProvider =
+                          Provider.of<AuthService>(context,
+                              listen: false);
+                          try{
+                            await authServiceProvider.sendPasswordResetEmail(emailController.text);
+                          } catch(e){
+                            print(e);
+                            print('error sending email');
+                          }
+                        },
+                        child: Text('FORGOT PASSWORD?',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).primaryColor,
+                        ),),
+                      ),
                       SizedBox(
-                        height: 70,
+                        height: 50,
                       ),
                       PrimaryButton(
                         btnText: "Login",
@@ -288,6 +306,8 @@ class _LoginPageState extends State<LoginPage> {
                         onTap: () {
                           setState(() {
                             _pagestate = 2;
+                            emailController.clear();
+                            passwordController.clear();
                           });
                         },
                       ),
@@ -424,6 +444,8 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         setState(() {
                           _pagestate = 1;
+                          emailController.clear();
+                          passwordController.clear();
                         });
                       },
                       child: OutlineBtn(
@@ -453,8 +475,18 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSignUp(BuildContext _context) async {
     final authServiceProvider =
         Provider.of<AuthService>(_context, listen: false);
-    final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
+      try{
+        var authUser = await authServiceProvider.createUser(emailController.text, passwordController.text, nameController.text);
+        print('new user created');
+        await _createFirebaseDocument(authUser);
+        Navigator.push(context,
+          MaterialPageRoute(
+              builder: (_context) => HomePage()),);
+      }catch(e){
+        print(e);
+        print('error creating user');
+      }
     }
   }
 
@@ -465,7 +497,7 @@ class _LoginPageState extends State<LoginPage> {
     final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
       try {
-        await authService.signInWithEmailPassword(
+        await authServiceProvider.signInWithEmailPassword(
             emailController.text, passwordController.text);
         print("Sign In Successful!");
         // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
@@ -505,7 +537,7 @@ class _LoginPageState extends State<LoginPage> {
           if (!docSnapshot.exists)
             {
               var photo_url = authUser.photoUrl ??
-                  "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
+                  "assets/images/noprofile.png";
               usersRef
                   .set({
                     "name": authUser.displayName,

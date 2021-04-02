@@ -52,9 +52,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: CircleAvatar(
                         radius: 70.0,
-                        backgroundImage: authUser.currentUser().photoUrl == null
-                            ? AssetImage("assets/images/noprofile.png")
-                            : NetworkImage(authUser.currentUser().photoUrl),
+                        backgroundImage: NetworkImage('https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar3.jpg?alt=media&token=2e8a8841-ad0a-4654-80bd-18d3d5627f26'),
                       ),
                     ),
                     Container(
