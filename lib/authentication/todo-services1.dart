@@ -27,6 +27,16 @@ class TodoService {
         .update({"task_completion": !isComplete});
   }
 
+  Future updateTask(uid, title, description) async {
+    await UsersCollection
+        .doc(firebaseAuth.currentUser.email)
+        .collection("To-Do")
+        .doc(uid)
+        .update({
+      "task_title": title,
+      "task_description": description,});
+  }
+
   Future removeTodo(uid) async {
     await UsersCollection
         .doc(firebaseAuth.currentUser.email)

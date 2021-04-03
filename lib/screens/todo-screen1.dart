@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:baatein/utils/todo_model.dart';
 import 'package:baatein/authentication/todo-services1.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
 
 class ToDoList1 extends StatefulWidget {
   @override
@@ -17,6 +19,8 @@ class _ToDoListState1 extends State<ToDoList1> {
       FirebaseFirestore.instance.collection("Users");
   TextEditingController taskTitleController = TextEditingController();
   TextEditingController taskDescriptionController = TextEditingController();
+  TextEditingController editTitle = TextEditingController();
+  TextEditingController editDescription = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,7 @@ class _ToDoListState1 extends State<ToDoList1> {
                           children: [
                             Divider(),
                             TextFormField(
+                              maxLength: 15,
                               controller: taskTitleController,
                               textCapitalization: TextCapitalization.words,
                               style: TextStyle(
@@ -66,9 +71,10 @@ class _ToDoListState1 extends State<ToDoList1> {
                                       fontWeight: FontWeight.w200)),
                             ),
                             SizedBox(
-                              height: 30,
+                              height: 20,
                             ),
                             TextFormField(
+                              maxLength: 25,
                               controller: taskDescriptionController,
                               textCapitalization: TextCapitalization.sentences,
                               style: TextStyle(
@@ -80,7 +86,7 @@ class _ToDoListState1 extends State<ToDoList1> {
                                       fontWeight: FontWeight.w100)),
                             ),
                             SizedBox(
-                              height: 50,
+                              height: 30,
                             ),
                             ElevatedButton(
                                 onPressed: () async {
@@ -102,15 +108,6 @@ class _ToDoListState1 extends State<ToDoList1> {
                                       borderRadius: BorderRadius.circular(20)),
                                   primary: Theme.of(context).primaryColor,
                                 )),
-                            TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text(
-                                  "BACK",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                      letterSpacing: 1,
-                                      fontSize: 12),
-                                )),
                             Container(
                               width: MediaQuery.of(context).size.width,
                             )
@@ -124,7 +121,7 @@ class _ToDoListState1 extends State<ToDoList1> {
           stream: FirebaseFirestore.instance
               .collection("Users")
               .doc(firebaseAuth.currentUser.email)
-              .collection("To-Do")
+              .collection("To-Do").orderBy("task_time")
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -142,9 +139,12 @@ class _ToDoListState1 extends State<ToDoList1> {
               }).toList();
 
               return ListView.builder(
+                reverse: true,
                 shrinkWrap: true,
                 itemCount: todos.length,
                 itemBuilder: (context, index) {
+                  final DateTime docDateTime = DateTime.parse(todos[index].task_time);
+                  var time = DateFormat("dd MMM HH:mm").format(docDateTime);
                   return Container(
                     margin: EdgeInsets.only(left: 15, right: 15, top: 15),
                     padding: EdgeInsets.all(5),
@@ -154,79 +154,107 @@ class _ToDoListState1 extends State<ToDoList1> {
                           showDialog(
                               context: context,
                               builder: (_) => new SimpleDialog(
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 30),
-                                    backgroundColor: Colors.grey.shade100,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    title: Center(
-                                      child: Text(
-                                        todos[index].task_title,
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            letterSpacing: 1,
-                                            fontSize: 20),
-                                      ),
-                                    ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                backgroundColor: Colors.grey.shade100,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                title: Text(
+                                  "Edit To-do",
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      letterSpacing: 1,
+                                      fontSize: 20),
+                                ),
+                                children: [
+                                  Divider(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Divider(),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          todos[index].task_description,
-                                          overflow: TextOverflow.visible,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w200,
-                                              color: Colors.black54),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          todos[index].task_time,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w200,
-                                              color: Colors.black54),
-                                        ),
-                                      ),
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Text(
-                                            "BACK",
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                letterSpacing: 1,
-                                                fontSize: 12),
-                                          )),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.5,
-                                      )
+                                      Text('Title: '),
+                                      Text(todos[index].task_title,
+                                        overflow: TextOverflow.visible,),
                                     ],
-                                  ));
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Desc: '),
+                                      Text(todos[index].task_description,
+                                      overflow: TextOverflow.visible,),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Created on: '),
+                                      Text(time),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextFormField(
+                                    maxLength: 15,
+                                    controller: editTitle,
+                                    textCapitalization: TextCapitalization.words,
+                                    style: TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.w300),
+                                    decoration: InputDecoration(
+                                        hintText: "New Title",
+                                        hintStyle: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w200)),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  TextFormField(
+                                    maxLength: 25,
+                                    controller: editDescription,
+                                    textCapitalization: TextCapitalization.sentences,
+                                    style: TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.w300),
+                                    decoration: InputDecoration(
+                                        hintText: "New Description",
+                                        hintStyle: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w100)),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        var new_title = editTitle.text;
+                                        var new_descript = editDescription.text;
+                                        if (editTitle.text.isNotEmpty) {
+                                          await TodoService().updateTask(todos[index].task_uid, new_title, new_descript);
+                                          setState(() {
+                                            editTitle.clear();
+                                            editDescription.clear();
+                                          });
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: Text("Edit"),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20)),
+                                        primary: Theme.of(context).primaryColor,
+                                      )),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                  )
+                                ],
+                              ));;
                         },
-                        // leading: isComplete
-                        //     ? Icon(
-                        //         Icons.check_box_outlined,
-                        //         size: 22,
-                        //         color: Colors.black87,
-                        //       )
-                        //     : Icon(
-                        //         Icons.check_box_outline_blank,
-                        //         size: 22,
-                        //         color: Colors.black87,
-                        //       ),
                         leading: IconButton(
                           onPressed: () {
                             TodoService().completeTask(todos[index].task_uid, todos[index].isComplete);
