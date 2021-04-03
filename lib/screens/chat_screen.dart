@@ -1,12 +1,14 @@
 import 'dart:async';
-
 import 'package:baatein/authentication/authService.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:baatein/utils/message_model.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatScreen extends StatefulWidget {
   final String user;
@@ -39,7 +41,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 // color: Theme.of(context).primaryColor,
                 // color: Color(0xFFFEEFEC),
                 color: Colors.cyan.shade100,
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3),
@@ -51,11 +57,17 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    message.text,
-                    style: TextStyle(
-                      color: Colors.black87,
-                    ),
+                  Linkify(
+                      onOpen: (link) async {
+                        if (await canLaunch(link.url)) {
+                          await launch(link.url);
+                        } else {
+                          throw 'Could not launch $link';
+                        }
+                      },
+                      text: message.text,
+                    style: TextStyle(color: Colors.black87,),
+                    linkStyle: TextStyle(color: Colors.red.shade600),
                   ),
                   SizedBox(
                     height: 5,
@@ -86,7 +98,11 @@ class _ChatScreenState extends State<ChatScreen> {
               margin: EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15),
+              topLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+            ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3),
@@ -98,11 +114,17 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    message.text,
-                    style: TextStyle(
-                      color: Colors.black87,
-                    ),
+                  Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw 'Could not launch $link';
+                      }
+                    },
+                    text: message.text,
+                    style: TextStyle(color: Colors.black87,),
+                    linkStyle: TextStyle(color: Colors.red.shade600),
                   ),
                   SizedBox(
                     height: 5,
@@ -125,7 +147,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   _sendMessageArea(UserCredentials authUser) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.all(8),
       height: 70,
       color: Colors.white,
       child: Row(
@@ -249,7 +271,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     return Expanded(
                       child: ListView.builder(
                         controller: _scrollController,
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                         itemCount: messages.length,
                         itemBuilder: (BuildContext context, int index) {
                           var timestamp =

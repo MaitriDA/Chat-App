@@ -109,7 +109,7 @@ class _SetProfileState extends State<SetProfile> {
                   // backgroundImage: _pickedImage == null
                   //     ? AssetImage("assets/images/noprofile.png")
                   //     : FileImage(File(_pickedImage.path))
-                backgroundImage:NetworkImage('https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Fnoprofile.png?alt=media&token=a165063d-3a26-4525-9e04-d5c7050e690f'),
+                backgroundImage:NetworkImage(firebaseAuth.currentUser.photoURL),
               ),
             ),
             Column(

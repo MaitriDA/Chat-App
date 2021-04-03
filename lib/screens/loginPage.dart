@@ -251,9 +251,49 @@ class _LoginPageState extends State<LoginPage> {
                               listen: false);
                           try{
                             await authServiceProvider.sendPasswordResetEmail(emailController.text);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Reset Password Email"),
+                                  content: Text("Reset password email has been sent to your email."),
+                                  actions: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                      child: TextButton(
+                                        child: Text("Got it"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           } catch(e){
                             print(e);
                             print('error sending email');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text("Error sending reset email."),
+                                  actions: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                      child: TextButton(
+                                        child: Text("Try Again"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           }
                         },
                         child: Text('FORGOT PASSWORD?',
