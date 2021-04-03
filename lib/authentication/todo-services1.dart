@@ -19,12 +19,12 @@ class TodoService {
     });
   }
 
-  Future completeTask(uid) async {
+  Future completeTask(uid, isComplete) async {
     await UsersCollection
         .doc(firebaseAuth.currentUser.email)
         .collection("To-Do")
         .doc(uid)
-        .update({"task_completion": true});
+        .update({"task_completion": !isComplete});
   }
 
   Future removeTodo(uid) async {
@@ -35,27 +35,5 @@ class TodoService {
         .delete();
   }
 
-  List<Todo> todoFromFirestore(QuerySnapshot snapshot) {
-    if (snapshot != null) {
-      return snapshot.docs.map((e) {
-        return Todo(
-          isComplete: e.data()["task_completion"],
-          task_title: e.data()["task_title"],
-          task_description: e.data()["task_description"],
-          task_time: e.data()["task_time"],
-          task_uid: e.id,
-        );
-      }).toList();
-    } else {
-      return null;
-    }
-  }
 
-  Stream<List<Todo>> listTodos() {
-    return UsersCollection
-        .doc(firebaseAuth.currentUser.email)
-        .collection("To-Do")
-        .snapshots()
-        .map(todoFromFirestore);
-  }
 }
