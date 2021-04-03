@@ -1,3 +1,4 @@
+import 'package:baatein/screens/chat_screen.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -43,101 +44,100 @@ class SearchUsers extends SearchDelegate {
     // show when someone searches for something
 
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection("Users").snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection("Users")
+          .doc("allusers")
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var nameList = [];
-          var phoneList = [];
-          final searchName = FirebaseFirestore.instance
-              .collection("Users")
-              .where("name", isGreaterThanOrEqualTo: query)
-              .where("name", isLessThanOrEqualTo: query + '~');
+          var doc = snapshot.data.data();
+          List names = doc["names"];
+          List phones = doc["phones"];
+          List emails = doc["emails"];
+          final List namesList = [];
+          final List phonesList = [];
+          List nameList = [];
+          List phoneList = [];
+          if (!query.isEmpty) {
+            nameList = names
+                .where((element) =>
+                    element.contains(RegExp(query, caseSensitive: false)))
+                .toList();
+            phoneList = phones
+                .where((element) =>
+                    element.contains(RegExp(query, caseSensitive: false)))
+                .toList();
+          }
 
-          final searchPhone = FirebaseFirestore.instance
-              .collection("Users")
-              .where("phone", isGreaterThanOrEqualTo: query)
-              .where("phone", isLessThanOrEqualTo: query + '~');
+          for (int i = 0; i < phoneList.length; i++) {
+            if (emails[phones.indexOf(phoneList[i])] != authUser.email)
+              phonesList.add(phones.indexOf(phoneList[i]));
+          }
 
-          searchName.get().then((querySnapshot) {
-            querySnapshot.docs.forEach((doc) {
-              nameList.add({
-                "email": doc.id,
-                "phone": doc["phone"],
-                "name": doc["name"],
-                "photo_url": doc["photo_url"]
-              });
-            });
-          });
+          for (int i = 0; i < nameList.length; i++) {
+            if (emails[names.indexOf(nameList[i])] != authUser.email)
+              namesList.add(names.indexOf(nameList[i]));
+          }
 
-          searchPhone.get().then((querySnapshot) {
-            querySnapshot.docs.forEach((doc) {
-              phoneList.add({
-                "email": doc.id,
-                "phone": doc["phone"],
-                "name": doc["name"],
-                "photo_url": doc["photo_url"]
-              });
-            });
-          });
           return Column(
             children: [
-              ListView.builder(
-                itemCount: nameList.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      leading: Icon(Icons.insert_drive_file_rounded),
-                      title: RichText(
-                        text: TextSpan(
-                          text: nameList[index]["name"],
-                          style: TextStyle(
-                              color: Colors.grey, fontWeight: FontWeight.bold),
-                        ),
+              phonesList.isEmpty
+                  ? Expanded(
+                      child: ListView.builder(
+                        itemCount: namesList.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                              leading: Icon(Icons.insert_drive_file_rounded),
+                              title: RichText(
+                                text: TextSpan(
+                                  text: names[namesList[index]],
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              subtitle: Text(phones[namesList[index]]),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatScreen()),
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
-                      onTap: () async {
-                        await createDocument(nameList[index]);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ShowPDFScreen(
-                        //       filename: mapList[index]["file_name"],
-                        //       url: mapList[index]["url"],
-                        //     ),
-                        //   ),
-                        // );
-                      },
-                    ),
-                  );
-                },
-              ),
-              ListView.builder(
-                itemCount: phoneList.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      leading: Icon(Icons.insert_drive_file_rounded),
-                      title: RichText(
-                        text: TextSpan(
-                          text: phoneList[index]["name"],
-                          style: TextStyle(
-                              color: Colors.grey, fontWeight: FontWeight.bold),
-                        ),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: phonesList.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                              leading: Icon(Icons.insert_drive_file_rounded),
+                              title: RichText(
+                                text: TextSpan(
+                                  text: names[phonesList[index]],
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              subtitle: Text(phones[phonesList[index]]),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatScreen()),
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
-                      onTap: () async {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ShowPDFScreen(
-                        //       filename: mapList[index]["file_name"],
-                        //       url: mapList[index]["url"],
-                        //     ),
-                        //   ),
-                        // );
-                      },
                     ),
-                  );
-                },
-              ),
             ],
           );
         }
@@ -155,7 +155,7 @@ class SearchUsers extends SearchDelegate {
     );
   }
 
-  createDocument(Map<String, dynamic> user) async {
+  createDocument(Map<String, dynamic> user, String authPhone) async {
     final authUserRef = FirebaseFirestore.instance
         .collection('Users')
         .doc(authUser.email)
@@ -183,17 +183,14 @@ class SearchUsers extends SearchDelegate {
 
         userRef
             .set({
-          "name": authUser.displayName,
-          "email": authUser.email,
-          "phone": ,
-          "photo_url": user["photo_url"]
-        })
+              "name": authUser.displayName,
+              "email": authUser.email,
+              "phone": authPhone,
+              "photo_url": user["photo_url"]
+            })
             .then((value) => print("User's Document Added"))
-            .catchError((error) =>
-            print("Failed to add user: $error"));
+            .catchError((error) => print("Failed to add user: $error"));
       }
     });
-
-
   }
 }

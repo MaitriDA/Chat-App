@@ -32,7 +32,8 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
-                showSearch(context: context, delegate: SearchUsers(authUser: user));
+                showSearch(
+                    context: context, delegate: SearchUsers(authUser: user));
               },
             ),
           ],
@@ -57,7 +58,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: CircleAvatar(
                           radius: 70.0,
-                          backgroundImage: authUser.currentUser().photoUrl == null
+                          backgroundImage: authUser.currentUser().photoUrl ==
+                                  null
                               ? AssetImage("assets/images/noprofile.png")
                               : NetworkImage(authUser.currentUser().photoUrl),
                         ),
@@ -97,7 +99,8 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => ToDoList()),
+                              MaterialPageRoute(
+                                  builder: (context) => ToDoList()),
                             );
                           },
                           leading: Icon(Icons.star_border),
@@ -136,8 +139,8 @@ class _HomePageState extends State<HomePage> {
                             try {
                               authUser.signOutUser();
                               print("SignOut Successful!");
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, "/", (Route<dynamic> route) => false);
+                              Navigator.pushNamedAndRemoveUntil(context, "/",
+                                  (Route<dynamic> route) => false);
                             } catch (e) {
                               print(e);
                               showDialog(
@@ -218,14 +221,17 @@ class _HomePageState extends State<HomePage> {
                     if (usersList[index]["last_message"] == "") {
                       text = "";
                     } else {
-                      var timestamp = usersList[index]["last_message"]["timestamp"]
-                          .toDate().toString();
+                      var timestamp = usersList[index]["last_message"]
+                              ["timestamp"]
+                          .toDate()
+                          .toString();
                       final DateTime docDateTime = DateTime.parse(timestamp);
-                      time = DateFormat("dd MMM HH:mm").format( docDateTime);
+                      time = DateFormat("dd MMM HH:mm").format(docDateTime);
 
-                      var message = usersList[index]["last_message"]["message"].toString();
+                      var message = usersList[index]["last_message"]["message"]
+                          .toString();
                       text = message + "    " + time;
-                      if(message.length > 20){
+                      if (message.length > 20) {
                         text = (message).substring(0, 18) + "...    " + time;
                       }
                     }

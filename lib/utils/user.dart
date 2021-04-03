@@ -7,7 +7,6 @@ class UserCredentials {
     this.email,
     this.photoUrl,
     this.displayName,
-    this.phone
   });
 
   final String uid;
@@ -15,6 +14,5 @@ class UserCredentials {
   final String email;
   final String photoUrl;
   final String displayName;
-  final String phone;
 }
 

@@ -249,11 +249,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       PrimaryButton(
                         btnText: "Login",
-                        onPressed: ()
-                          async {
-                            validateAndLogin(context);
-                            // Navigator.pushNamed(context, "/setProfile");
-                          },
+                        onPressed: () async {
+                          validateAndLogin(context);
+                          // Navigator.pushNamed(context, "/setProfile");
+                        },
                       ),
                       SizedBox(
                         height: 20,
@@ -270,9 +269,11 @@ class _LoginPageState extends State<LoginPage> {
                                   await authServiceProvider.signInWithGoogle();
                               await _createFirebaseDocument(authUser);
                               print("Users Logged In");
-                              Navigator.push(context,
+                              Navigator.push(
+                                context,
                                 MaterialPageRoute(
-                                    builder: (_context) => HomePage()),);
+                                    builder: (_context) => HomePage()),
+                              );
                               print("login successful");
                             } catch (signUpError) {
                               print(signUpError);
@@ -331,10 +332,10 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: "Name",
                       myController: nameController,
                       keyboardType: TextInputType.name,
-                        validateFunc: (val) {
-                          if (val.isEmpty) return 'Name Required';
-                          return null;
-                        },
+                      validateFunc: (val) {
+                        if (val.isEmpty) return 'Name Required';
+                        return null;
+                      },
                     ),
                     SizedBox(
                       height: 20,
@@ -402,7 +403,8 @@ class _LoginPageState extends State<LoginPage> {
                           if (val != passwordController.text)
                             return 'Not Match';
                           if (val.isEmpty) return 'Enter Password';
-                          if (val != passwordController.text) return 'Not Match';
+                          if (val != passwordController.text)
+                            return 'Not Match';
                           return null;
                         }),
                     SizedBox(
@@ -455,6 +457,38 @@ class _LoginPageState extends State<LoginPage> {
         Provider.of<AuthService>(_context, listen: false);
     final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
+      try {
+        var authUser = await authService.createUser(
+            emailController.text, passwordController.text, nameController.text);
+        await _createFirebaseDocument(authUser);
+        print("Sign Up Successful!");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_context) => HomePage()),
+        );
+      } catch (e) {
+        print(e);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Some error occurred!\nPlease Try Again!"),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  child: TextButton(
+                    child: Text("Try Again"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -465,13 +499,15 @@ class _LoginPageState extends State<LoginPage> {
     final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
       try {
-        await authService.signInWithEmailPassword(
+        var authUser = await authService.signInWithEmailPassword(
             emailController.text, passwordController.text);
+        await _createFirebaseDocument(authUser);
         print("Sign In Successful!");
         // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
-        Navigator.push(context,
-          MaterialPageRoute(
-              builder: (_context) => HomePage()),);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_context) => HomePage()),
+        );
       } catch (e) {
         print(e);
         showDialog(
@@ -501,23 +537,31 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _createFirebaseDocument(UserCredentials authUser) async {
     final usersRef =
         FirebaseFirestore.instance.collection('Users').doc(authUser.email);
-    usersRef.get().then((docSnapshot){
-          if (!docSnapshot.exists)
-            {
-              var photo_url = authUser.photoUrl ??
-                  "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
-              usersRef
-                  .set({
-                    "name": authUser.displayName,
-                    "email": authUser.email,
-                    "phone": phoneController.text,
-                    "photo_url": photo_url
-                  })
-                  .then((value) => print("User's Document Added"))
-                  .catchError((error) => print(
-                      "Failed to add user: $error"));// create the document
-            }
+    usersRef.get().then((docSnapshot) async {
+      if (!docSnapshot.exists) {
+        var photo_url = authUser.photoUrl ??
+            "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
+        usersRef
+            .set({
+              "name": authUser.displayName,
+              "email": authUser.email,
+              "phone": phoneController.text,
+              "photo_url": photo_url
+            })
+            .then((value) => print("User's Document Added"))
+            .catchError((error) =>
+                print("Failed to add user: $error")); // create the document
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc("allusers")
+            .update({
+          "emails": FieldValue.arrayUnion([authUser.email]),
+          "phones": FieldValue.arrayUnion([authUser.displayName]),
+          "names": FieldValue.arrayUnion([phoneController.text]),
         });
+      }
+    });
   }
 }
 
@@ -562,7 +606,9 @@ class _InputWithIconState extends State<InputWithIcon> {
               height: 50,
               child: TextFormField(
                 decoration: InputDecoration(
-                    errorStyle: TextStyle(fontSize: 9,),
+                    errorStyle: TextStyle(
+                      fontSize: 9,
+                    ),
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     border: InputBorder.none,
                     hintText: widget.hintText),
