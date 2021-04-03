@@ -244,8 +244,71 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                       ),
+                      TextButton(
+                        onPressed: () async {
+                          final authServiceProvider =
+                              Provider.of<AuthService>(context, listen: false);
+                          try {
+                            await authServiceProvider
+                                .sendPasswordResetEmail(emailController.text);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Reset Password Email"),
+                                  content: Text(
+                                      "Reset password email has been sent to your email."),
+                                  actions: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          15, 10, 15, 10),
+                                      child: TextButton(
+                                        child: Text("Got it"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } catch (e) {
+                            print(e);
+                            print('error sending email');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text("Error sending reset email."),
+                                  actions: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          15, 10, 15, 10),
+                                      child: TextButton(
+                                        child: Text("Try Again"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        child: Text(
+                          'FORGOT PASSWORD?',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
                       SizedBox(
-                        height: 70,
+                        height: 50,
                       ),
                       PrimaryButton(
                         btnText: "Login",
@@ -289,6 +352,8 @@ class _LoginPageState extends State<LoginPage> {
                         onTap: () {
                           setState(() {
                             _pagestate = 2;
+                            emailController.clear();
+                            passwordController.clear();
                           });
                         },
                       ),
@@ -426,6 +491,8 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         setState(() {
                           _pagestate = 1;
+                          emailController.clear();
+                          passwordController.clear();
                         });
                       },
                       child: OutlineBtn(
@@ -455,10 +522,9 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSignUp(BuildContext _context) async {
     final authServiceProvider =
         Provider.of<AuthService>(_context, listen: false);
-    final authService = authServiceProvider.getCurrentUser();
     if (validateAndSave()) {
       try {
-        var authUser = await authService.createUser(
+        var authUser = await authServiceProvider.createUser(
             emailController.text, passwordController.text, nameController.text);
         await _createFirebaseDocument(authUser);
         print("Sign Up Successful!");

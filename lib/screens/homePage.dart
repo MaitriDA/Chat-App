@@ -1,5 +1,5 @@
 import 'package:baatein/authentication/authService.dart';
-import 'package:baatein/screens/todoScreen.dart';
+import 'package:baatein/screens/todo-screen1.dart';
 import 'package:baatein/utils/dataSearch.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                         child: Text(
                           authUser.currentUser().displayName,
                           style: TextStyle(
@@ -99,8 +99,12 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.push(
                               context,
+<<<<<<< HEAD
                               MaterialPageRoute(
                                   builder: (context) => ToDoList()),
+=======
+                              MaterialPageRoute(builder: (context) => ToDoList1()),
+>>>>>>> ffb76eeb88dcfd5beea2e3fa0a16e51e9f7b5144
                             );
                           },
                           leading: Icon(Icons.star_border),
@@ -228,12 +232,20 @@ class _HomePageState extends State<HomePage> {
                       final DateTime docDateTime = DateTime.parse(timestamp);
                       time = DateFormat("dd MMM HH:mm").format(docDateTime);
 
+<<<<<<< HEAD
                       var message = usersList[index]["last_message"]["message"]
                           .toString();
                       text = message + "    " + time;
                       if (message.length > 20) {
                         text = (message).substring(0, 18) + "...    " + time;
                       }
+=======
+                      var message = usersList[index]["last_message"]["message"].toString();
+                      text = message;
+                      // if(message.length > 20){
+                      //   text = (message).substring(0, 18) + "...    " + time;
+                      // }
+>>>>>>> ffb76eeb88dcfd5beea2e3fa0a16e51e9f7b5144
                     }
                     final Message chat = Message(
                       sender: usersList[index]["email"],
@@ -257,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                       child: ListTile(
                         leading: Container(
                           decoration:
-                              BoxDecoration(shape: BoxShape.circle, boxShadow: [
+                          BoxDecoration(shape: BoxShape.circle, boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 1,
@@ -267,7 +279,7 @@ class _HomePageState extends State<HomePage> {
                           child: CircleAvatar(
                             radius: 30,
                             backgroundImage:
-                                NetworkImage(usersList[index]["photo_url"]),
+                            NetworkImage(usersList[index]["photo_url"]),
                           ),
                         ),
                         title: Text(
@@ -282,7 +294,17 @@ class _HomePageState extends State<HomePage> {
                         subtitle: Text(
                           chat.text,
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black54,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        trailing: Text(
+                          chat.time,
+                          style: TextStyle(
+                            fontSize: 12,
                             fontWeight: FontWeight.w300,
                             color: Colors.black54,
                           ),

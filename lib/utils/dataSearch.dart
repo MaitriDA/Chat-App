@@ -58,7 +58,7 @@ class SearchUsers extends SearchDelegate {
           final List phonesList = [];
           List nameList = [];
           List phoneList = [];
-          if (!query.isEmpty) {
+          if (query.isNotEmpty) {
             nameList = names
                 .where((element) =>
                     element.contains(RegExp(query, caseSensitive: false)))

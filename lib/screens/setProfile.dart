@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -12,6 +13,8 @@ class SetProfile extends StatefulWidget {
 }
 
 class _SetProfileState extends State<SetProfile> {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  CollectionReference UsersCollection = FirebaseFirestore.instance.collection("Users");
   File _pickedImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -103,9 +106,11 @@ class _SetProfileState extends State<SetProfile> {
               ),
               child: CircleAvatar(
                   radius: 100.0,
-                  backgroundImage: _pickedImage == null
-                      ? AssetImage("assets/images/noprofile.png")
-                      : FileImage(File(_pickedImage.path))),
+                  // backgroundImage: _pickedImage == null
+                  //     ? AssetImage("assets/images/noprofile.png")
+                  //     : FileImage(File(_pickedImage.path))
+                backgroundImage:NetworkImage(firebaseAuth.currentUser.photoURL),
+              ),
             ),
             Column(
               children: [
@@ -123,7 +128,10 @@ class _SetProfileState extends State<SetProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async{
+                            await UsersCollection.doc(firebaseAuth.currentUser.email)
+                                .update({"photo_url":"https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar1.jpg?alt=media&token=e7479dc7-bfbc-46c6-83d6-94ba6d6b3a47"});
+                          },
                           child: Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,
@@ -140,7 +148,10 @@ class _SetProfileState extends State<SetProfile> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async{
+                            await UsersCollection.doc(firebaseAuth.currentUser.email)
+                                .update({"photo_url":"https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar2.jpg?alt=media&token=85e84669-5a56-4673-a746-3c1659056d59"});
+                          },
                           child: Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,
@@ -157,7 +168,10 @@ class _SetProfileState extends State<SetProfile> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async{
+                            await UsersCollection.doc(firebaseAuth.currentUser.email)
+                                .update({"photo_url":"https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar3.jpg?alt=media&token=2e8a8841-ad0a-4654-80bd-18d3d5627f26"});
+                          },
                           child: Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,
@@ -181,7 +195,10 @@ class _SetProfileState extends State<SetProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async{
+                            await UsersCollection.doc(firebaseAuth.currentUser.email)
+                                .update({"photo_url":"https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar4.jpg?alt=media&token=638d4a9f-b8c1-4806-845e-2cd81eb04903"});
+                          },
                           child: Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,
@@ -198,7 +215,10 @@ class _SetProfileState extends State<SetProfile> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async{
+                            await UsersCollection.doc(firebaseAuth.currentUser.email)
+                                .update({"photo_url":"https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar5.jpg?alt=media&token=b9615579-25e0-46a5-9fe6-2527520d0fd0"});
+                          },
                           child: Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,
@@ -215,7 +235,10 @@ class _SetProfileState extends State<SetProfile> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async{
+                            await UsersCollection.doc(firebaseAuth.currentUser.email)
+                                .update({"photo_url":"https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/avatars%2Favatars%2Favatar6.jpg?alt=media&token=05292b20-7266-4e08-8286-9e343081fa09"});
+                          },
                           child: Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,
