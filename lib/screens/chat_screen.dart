@@ -25,7 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   ScrollController _scrollController = ScrollController();
 
   _chatBubble(
-      UserCredentials authUser, Message message, bool isMe, bool isSameUser) {
+      UserCredentials authUser, Message message, bool isMe) {
     if (isMe) {
       return Column(
         children: <Widget>[
@@ -230,6 +230,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Timer(
+      Duration(milliseconds: 200),
+          () => _scrollController.jumpTo(_scrollController.position.maxScrollExtent),
+    );
     final authUser = Provider.of<AuthService>(context).currentUser();
     String prevUserId;
     return SafeArea(
@@ -287,13 +291,16 @@ class _ChatScreenState extends State<ChatScreen> {
                               unread: false);
                           final bool isMe =
                               messages[index]["sender"] == authUser.email;
-                          final bool isSameUser =
-                              prevUserId == messages[index]["sender"];
                           prevUserId = messages[index]["sender"];
                           return _chatBubble(
-                              authUser, message, isMe, isSameUser);
+                              authUser, message, isMe);
                         },
                       ),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text("Please check your internet connection"),
                     );
                   }
                   return Center(
