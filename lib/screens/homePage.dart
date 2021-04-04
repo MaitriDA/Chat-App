@@ -99,12 +99,8 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-<<<<<<< HEAD
                               MaterialPageRoute(
-                                  builder: (context) => ToDoList()),
-=======
-                              MaterialPageRoute(builder: (context) => ToDoList1()),
->>>>>>> ffb76eeb88dcfd5beea2e3fa0a16e51e9f7b5144
+                                  builder: (context) => ToDoList1()),
                             );
                           },
                           leading: Icon(Icons.star_border),
@@ -231,21 +227,12 @@ class _HomePageState extends State<HomePage> {
                           .toString();
                       final DateTime docDateTime = DateTime.parse(timestamp);
                       time = DateFormat("dd MMM HH:mm").format(docDateTime);
-
-<<<<<<< HEAD
                       var message = usersList[index]["last_message"]["message"]
                           .toString();
                       text = message + "    " + time;
                       if (message.length > 20) {
                         text = (message).substring(0, 18) + "...    " + time;
                       }
-=======
-                      var message = usersList[index]["last_message"]["message"].toString();
-                      text = message;
-                      // if(message.length > 20){
-                      //   text = (message).substring(0, 18) + "...    " + time;
-                      // }
->>>>>>> ffb76eeb88dcfd5beea2e3fa0a16e51e9f7b5144
                     }
                     final Message chat = Message(
                       sender: usersList[index]["email"],
