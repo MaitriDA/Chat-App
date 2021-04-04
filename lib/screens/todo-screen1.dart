@@ -273,14 +273,14 @@ class _ToDoListState1 extends State<ToDoList1> {
                               ? TextStyle(decoration: TextDecoration.lineThrough,fontWeight: FontWeight.w500)
                               : TextStyle(fontWeight: FontWeight.w500),
                         ),
-                        subtitle: Text(
+                        subtitle: todos[index].task_description!=""? Text(
                           todos[index].task_description,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                        ),
+                        ):Container(child: null,),
                         trailing: IconButton(
                           onPressed: () async {
                             try {
