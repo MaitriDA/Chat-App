@@ -15,7 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   // Declaring Necessary Variables
   int _pagestate = 0;
 
-  final formKey = GlobalKey<FormState>();
+  final loginFormKey = GlobalKey<FormState>();
+  final signUpFormKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmpassController = TextEditingController();
@@ -79,116 +80,116 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Form(
-        key: formKey,
-        child: Stack(
-          children: [
-            AnimatedContainer(
-              curve: Curves.fastLinearToSlowEaseIn,
-              duration: Duration(milliseconds: 1000),
-              color: _backgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        GestureDetector(
-                          child: SafeArea(
-                            child: Container(
-                              alignment: Alignment.topLeft,
-                              margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: Icon(
-                                Icons.arrow_back_rounded,
-                                color: _arrowColor,
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              if (_pagestate == 2) {
-                                _pagestate = 1;
-                              } else {
-                                _pagestate = 0;
-                              }
-                            });
-                          },
-                        ),
-                        AnimatedContainer(
-                          curve: Curves.fastLinearToSlowEaseIn,
-                          duration: Duration(milliseconds: 1000),
-                          margin: EdgeInsets.only(top: _headingTop),
-                          child: Text(
-                            "Baatein",
-                            style: TextStyle(
-                              color: _headingColor,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "Welcome, we are so glad to see you :)",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: _headingColor,
-                              fontSize: 16,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Image.asset('assets/images/vector5.png'),
-                        ),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        child: GestureDetector(
+      body: Stack(
+        children: [
+          AnimatedContainer(
+            curve: Curves.fastLinearToSlowEaseIn,
+            duration: Duration(milliseconds: 1000),
+            color: _backgroundColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      GestureDetector(
+                        child: SafeArea(
                           child: Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 40, horizontal: 32),
-                            padding: EdgeInsets.all(20),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                color: Color(0xFFB1E4155),
-                                borderRadius: BorderRadius.circular(50)),
-                            child: Center(
-                              child: Text(
-                                "Get Started",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
+                            alignment: Alignment.topLeft,
+                            margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                            child: Icon(
+                              Icons.arrow_back_rounded,
+                              color: _arrowColor,
                             ),
                           ),
-                          onTap: () {
-                            setState(() {
-                              if (_pagestate != 0) {
-                                _pagestate = 0;
-                              } else {
-                                _pagestate = 1;
-                              }
-                            });
-                          },
+                        ),
+                        onTap: () {
+                          setState(() {
+                            if (_pagestate == 2) {
+                              _pagestate = 1;
+                            } else {
+                              _pagestate = 0;
+                            }
+                          });
+                        },
+                      ),
+                      AnimatedContainer(
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        duration: Duration(milliseconds: 1000),
+                        margin: EdgeInsets.only(top: _headingTop),
+                        child: Text(
+                          "Baatein",
+                          style: TextStyle(
+                            color: _headingColor,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "Welcome, we are so glad to see you :)",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: _headingColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                ],
-              ),
+                ),
+                Column(
+                  children: [
+                    Container(
+                      child: Center(
+                        child: Image.asset('assets/images/vector5.png'),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.white,
+                      child: GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: 40, horizontal: 32),
+                          padding: EdgeInsets.all(20),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Color(0xFFB1E4155),
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Center(
+                            child: Text(
+                              "Get Started",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            if (_pagestate != 0) {
+                              _pagestate = 0;
+                            } else {
+                              _pagestate = 1;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
+          ),
 
-            // Login Section
-            AnimatedContainer(
+          // Login Section
+          Form(
+            key: loginFormKey,
+            child: AnimatedContainer(
               padding: EdgeInsets.all(32),
               curve: Curves.fastLinearToSlowEaseIn,
               duration: Duration(milliseconds: 1000),
@@ -312,10 +313,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       PrimaryButton(
                         btnText: "Login",
-                        onPressed: () async {
+                        onPressed: ()async{
                           validateAndLogin(context);
-                          // Navigator.pushNamed(context, "/setProfile");
-                        },
+                        }
                       ),
                       SizedBox(
                         height: 20,
@@ -362,9 +362,12 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
+          ),
 
-            // SignUp Section
-            AnimatedContainer(
+          // SignUp Section
+          Form(
+            key: signUpFormKey,
+            child: AnimatedContainer(
                 padding: EdgeInsets.all(32),
                 curve: Curves.fastLinearToSlowEaseIn,
                 duration: Duration(milliseconds: 1000),
@@ -500,16 +503,27 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ],
-                ))
-          ],
-        ),
+                )),
+          )
+        ],
       ),
     );
   }
 
-  // Checking Submission from the Form
-  bool validateAndSave() {
-    final form = formKey.currentState;
+  // Checking Submission from the login Form
+  bool loginAndValidate() {
+    final form = loginFormKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // Checking Submission from the login Form
+  bool signUpAndValidate() {
+    final form = signUpFormKey.currentState;
     if (form.validate()) {
       form.save();
       return true;
@@ -522,7 +536,7 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSignUp(BuildContext _context) async {
     final authServiceProvider =
         Provider.of<AuthService>(_context, listen: false);
-    if (validateAndSave()) {
+    if (signUpAndValidate()) {
       try {
         var authUser = await authServiceProvider.createUser(
             emailController.text, passwordController.text, nameController.text);
@@ -560,10 +574,10 @@ class _LoginPageState extends State<LoginPage> {
 
   // logging In
   void validateAndLogin(BuildContext _context) async {
-    final authServiceProvider =
-        Provider.of<AuthService>(_context, listen: false);
+    final authServiceProvider = Provider.of<AuthService>(_context, listen: false);
     final authService = authServiceProvider.getCurrentUser();
-    if (validateAndSave()) {
+    if (loginAndValidate()) {
+      print("Validation Successful");
       try {
         var authUser = await authService.signInWithEmailPassword(
             emailController.text, passwordController.text);
@@ -600,6 +614,8 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+
+
   Future<void> _createFirebaseDocument(UserCredentials authUser) async {
     final usersRef =
         FirebaseFirestore.instance.collection('Users').doc(authUser.email);
@@ -607,7 +623,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!docSnapshot.exists) {
         var photo_url = authUser.photoUrl ??
             "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
-        usersRef
+        await usersRef
             .set({
               "name": authUser.displayName,
               "email": authUser.email,
@@ -625,6 +641,7 @@ class _LoginPageState extends State<LoginPage> {
           "emails": FieldValue.arrayUnion([authUser.email]),
           "phones": FieldValue.arrayUnion([authUser.displayName]),
           "names": FieldValue.arrayUnion([phoneController.text]),
+          "photo_urls": FieldValue.arrayUnion([authUser.photoUrl]),
         });
       }
     });
