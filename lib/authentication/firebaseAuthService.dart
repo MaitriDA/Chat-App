@@ -43,7 +43,7 @@ class FirebaseAuthService implements AuthService {
     await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((result) {
-      return result.user.updateProfile(displayName: displayName);
+      return result.user.updateProfile(displayName: displayName, photoURL: "noprofile.png");
     });
     return _userFromFirebase(_firebaseAuth.currentUser);
   }
@@ -59,13 +59,13 @@ class FirebaseAuthService implements AuthService {
   @override
   Future<UserCredentials> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
     final authResult = await _firebaseAuth.signInWithCredential(credential);
+    authResult.user.updateProfile(photoURL: "noprofile.png");
     return _userFromFirebase(authResult.user);
   }
 

@@ -58,10 +58,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: CircleAvatar(
                           radius: 70.0,
-                          backgroundImage: authUser.currentUser().photoUrl ==
-                                  null
-                              ? AssetImage("assets/images/noprofile.png")
-                              : NetworkImage(authUser.currentUser().photoUrl),
+                          backgroundImage:AssetImage("assets/images/" +  authUser.currentUser().photoUrl),
                         ),
                       ),
                       Container(
@@ -99,8 +96,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => ToDoList1()),
+                              MaterialPageRoute(builder: (context) => ToDoList1()),
                             );
                           },
                           leading: Icon(Icons.star_border),
@@ -207,7 +203,6 @@ class _HomePageState extends State<HomePage> {
                     "photo_url": doc["photo_url"]
                   };
                 }).toList();
-
                 return ListView.separated(
                   itemCount: usersList.length,
                   separatorBuilder: (BuildContext context, int index) {
@@ -227,12 +222,8 @@ class _HomePageState extends State<HomePage> {
                           .toString();
                       final DateTime docDateTime = DateTime.parse(timestamp);
                       time = DateFormat("dd MMM HH:mm").format(docDateTime);
-                      var message = usersList[index]["last_message"]["message"]
-                          .toString();
-                      text = message + "    " + time;
-                      if (message.length > 20) {
-                        text = (message).substring(0, 18) + "...    " + time;
-                      }
+                      var message = usersList[index]["last_message"]["message"].toString();
+                      text = message;
                     }
                     final Message chat = Message(
                       sender: usersList[index]["email"],

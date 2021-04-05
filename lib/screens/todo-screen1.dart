@@ -15,7 +15,7 @@ class ToDoList1 extends StatefulWidget {
 
 class _ToDoListState1 extends State<ToDoList1> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  CollectionReference UsersCollection =
+  CollectionReference usersCollection =
       FirebaseFirestore.instance.collection("Users");
   TextEditingController taskTitleController = TextEditingController();
   TextEditingController taskDescriptionController = TextEditingController();
@@ -232,10 +232,10 @@ class _ToDoListState1 extends State<ToDoList1> {
                                   ),
                                   ElevatedButton(
                                       onPressed: () async {
-                                        var new_title = editTitle.text;
-                                        var new_descript = editDescription.text;
+                                        var newTitle = editTitle.text;
+                                        var newDescript = editDescription.text;
                                         if (editTitle.text.isNotEmpty) {
-                                          await TodoService().updateTask(todos[index].task_uid, new_title, new_descript);
+                                          await TodoService().updateTask(todos[index].task_uid, newTitle, newDescript);
                                           setState(() {
                                             editTitle.clear();
                                             editDescription.clear();
@@ -253,7 +253,7 @@ class _ToDoListState1 extends State<ToDoList1> {
                                     width: MediaQuery.of(context).size.width,
                                   )
                                 ],
-                              ));;
+                              ));
                         },
                         leading: IconButton(
                           onPressed: () {
@@ -273,14 +273,14 @@ class _ToDoListState1 extends State<ToDoList1> {
                               ? TextStyle(decoration: TextDecoration.lineThrough,fontWeight: FontWeight.w500)
                               : TextStyle(fontWeight: FontWeight.w500),
                         ),
-                        subtitle: Text(
+                        subtitle: todos[index].task_description!=""? Text(
                           todos[index].task_description,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                        ),
+                        ):Container(child: null,),
                         trailing: IconButton(
                           onPressed: () async {
                             try {

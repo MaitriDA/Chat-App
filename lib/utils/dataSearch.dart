@@ -1,4 +1,5 @@
 import 'package:baatein/screens/chat_screen.dart';
+import 'package:baatein/screens/homePage.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,7 @@ class SearchUsers extends SearchDelegate {
           List names = doc["names"];
           List phones = doc["phones"];
           List emails = doc["emails"];
+          List photo_urls = doc["photo_urls"];
           final List namesList = [];
           final List phonesList = [];
           List nameList = [];
@@ -88,21 +90,37 @@ class SearchUsers extends SearchDelegate {
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              leading: Icon(Icons.insert_drive_file_rounded),
+                              contentPadding: EdgeInsets.all(8),
+                              leading: CircleAvatar(
+                                radius: 30,
+                                backgroundImage:
+                                    NetworkImage(photo_urls[namesList[index]]),
+                              ),
                               title: RichText(
                                 text: TextSpan(
                                   text: names[namesList[index]],
                                   style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.black54,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              subtitle: Text(phones[namesList[index]]),
-                              onTap: () {
+                              subtitle: Text("Tap to add user",
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12),
+                              ),
+                              onTap: () async {
+                                var user = {
+                                  "name": names[namesList[index]],
+                                  "email": emails[namesList[index]],
+                                  "photo_url": photo_urls[namesList[index]],
+                                };
+                                await createDocument(user);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ChatScreen()),
+                                      builder: (context) => HomePage()),
                                 );
                               },
                             ),
@@ -116,21 +134,37 @@ class SearchUsers extends SearchDelegate {
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              leading: Icon(Icons.insert_drive_file_rounded),
+                              contentPadding: EdgeInsets.all(8),
+                              leading: CircleAvatar(
+                                radius: 30,
+                                backgroundImage:
+                                    NetworkImage(photo_urls[phonesList[index]]),
+                              ),
                               title: RichText(
                                 text: TextSpan(
                                   text: names[phonesList[index]],
                                   style: TextStyle(
-                                      color: Colors.grey,
+                                      color: Colors.black54,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              subtitle: Text(phones[phonesList[index]]),
-                              onTap: () {
+                              subtitle: Text("Tap to add user",
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12),
+                              ),
+                              onTap: () async {
+                                var user = {
+                                  "name": names[phonesList[index]],
+                                  "email": emails[phonesList[index]],
+                                  "photo_url": photo_urls[phonesList[index]],
+                                };
+                                await createDocument(user);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ChatScreen()),
+                                      builder: (context) => HomePage()),
                                 );
                               },
                             ),
@@ -155,7 +189,7 @@ class SearchUsers extends SearchDelegate {
     );
   }
 
-  createDocument(Map<String, dynamic> user, String authPhone) async {
+  createDocument(Map<String, dynamic> user) async {
     final authUserRef = FirebaseFirestore.instance
         .collection('Users')
         .doc(authUser.email)
@@ -168,14 +202,26 @@ class SearchUsers extends SearchDelegate {
         .collection("Chats")
         .doc(authUser.email);
 
-    await authUserRef.get().then((docSnapshot) {
+    return await authUserRef.get().then((docSnapshot) {
       if (!docSnapshot.exists) {
         authUserRef
             .set({
               "name": user["name"],
               "email": user["email"],
-              "phone": user["phone"],
-              "photo_url": user["photo_url"]
+              // "phone": user["phone"],
+              "photo_url": user["photo_url"],
+              "chats": [
+                {
+                  "message": "hello from baatein team",
+                  "sender": user["email"],
+                  "timestamp": DateTime.now(),
+                },
+                {
+                  "message": "you can start chatting here",
+                  "sender": authUser.email,
+                  "timestamp": DateTime.now(),
+                },
+              ]
             })
             .then((value) => print("User's Document Added"))
             .catchError((error) =>
@@ -185,8 +231,20 @@ class SearchUsers extends SearchDelegate {
             .set({
               "name": authUser.displayName,
               "email": authUser.email,
-              "phone": authPhone,
-              "photo_url": user["photo_url"]
+              // "phone": authPhone,
+              "photo_url": user["photo_url"],
+              "chats": [
+                {
+                  "message": "hello from baatein team",
+                  "sender": user["email"],
+                  "timestamp": DateTime.now(),
+                },
+                {
+                  "message": "you can start chatting here",
+                  "sender": authUser.email,
+                  "timestamp": DateTime.now(),
+                },
+              ]
             })
             .then((value) => print("User's Document Added"))
             .catchError((error) => print("Failed to add user: $error"));

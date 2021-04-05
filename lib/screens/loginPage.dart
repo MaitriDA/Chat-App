@@ -1,10 +1,10 @@
 import 'package:baatein/authentication/authService.dart';
+import 'package:baatein/utils/inputWithIcon.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'homePage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,8 +14,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // Declaring Necessary Variables
   int _pagestate = 0;
-
-  final formKey = GlobalKey<FormState>();
+  bool forgetPassClick = false;
+  final loginFormKey = GlobalKey<FormState>();
+  final signUpFormKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmpassController = TextEditingController();
@@ -79,116 +80,116 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Form(
-        key: formKey,
-        child: Stack(
-          children: [
-            AnimatedContainer(
-              curve: Curves.fastLinearToSlowEaseIn,
-              duration: Duration(milliseconds: 1000),
-              color: _backgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        GestureDetector(
-                          child: SafeArea(
-                            child: Container(
-                              alignment: Alignment.topLeft,
-                              margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: Icon(
-                                Icons.arrow_back_rounded,
-                                color: _arrowColor,
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              if (_pagestate == 2) {
-                                _pagestate = 1;
-                              } else {
-                                _pagestate = 0;
-                              }
-                            });
-                          },
-                        ),
-                        AnimatedContainer(
-                          curve: Curves.fastLinearToSlowEaseIn,
-                          duration: Duration(milliseconds: 1000),
-                          margin: EdgeInsets.only(top: _headingTop),
-                          child: Text(
-                            "Baatein",
-                            style: TextStyle(
-                              color: _headingColor,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "Welcome, we are so glad to see you :)",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: _headingColor,
-                              fontSize: 16,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Image.asset('assets/images/vector5.png'),
-                        ),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        child: GestureDetector(
+      body: Stack(
+        children: [
+          AnimatedContainer(
+            curve: Curves.fastLinearToSlowEaseIn,
+            duration: Duration(milliseconds: 1000),
+            color: _backgroundColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      GestureDetector(
+                        child: SafeArea(
                           child: Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 40, horizontal: 32),
-                            padding: EdgeInsets.all(20),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                color: Color(0xFFB1E4155),
-                                borderRadius: BorderRadius.circular(50)),
-                            child: Center(
-                              child: Text(
-                                "Get Started",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
+                            alignment: Alignment.topLeft,
+                            margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                            child: Icon(
+                              Icons.arrow_back_rounded,
+                              color: _arrowColor,
                             ),
                           ),
-                          onTap: () {
-                            setState(() {
-                              if (_pagestate != 0) {
-                                _pagestate = 0;
-                              } else {
-                                _pagestate = 1;
-                              }
-                            });
-                          },
+                        ),
+                        onTap: () {
+                          setState(() {
+                            if (_pagestate == 2) {
+                              _pagestate = 1;
+                            } else {
+                              _pagestate = 0;
+                            }
+                          });
+                        },
+                      ),
+                      AnimatedContainer(
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        duration: Duration(milliseconds: 1000),
+                        margin: EdgeInsets.only(top: _headingTop),
+                        child: Text(
+                          "Baatein",
+                          style: TextStyle(
+                            color: _headingColor,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "Welcome, we are so glad to see you :)",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: _headingColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                ],
-              ),
+                ),
+                Column(
+                  children: [
+                    Container(
+                      child: Center(
+                        child: Image.asset('assets/images/vector5.png'),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.white,
+                      child: GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: 40, horizontal: 32),
+                          padding: EdgeInsets.all(20),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Color(0xFFB1E4155),
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Center(
+                            child: Text(
+                              "Get Started",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            if (_pagestate != 0) {
+                              _pagestate = 0;
+                            } else {
+                              _pagestate = 1;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
+          ),
 
-            // Login Section
-            AnimatedContainer(
+          // Login Section
+          Form(
+            key: loginFormKey,
+            child: AnimatedContainer(
               padding: EdgeInsets.all(32),
               curve: Curves.fastLinearToSlowEaseIn,
               duration: Duration(milliseconds: 1000),
@@ -236,7 +237,9 @@ class _LoginPageState extends State<LoginPage> {
                         myController: passwordController,
                         obscure: true,
                         validateFunc: (value) {
-                          if (value.isEmpty) {
+                          if (forgetPassClick) {
+                            return null;
+                          } else if (value.isEmpty) {
                             return "Enter Password";
                           } else if (value.length < 6) {
                             return "Password should be atleast 6 characters!";
@@ -245,7 +248,18 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       TextButton(
+                        child: Text(
+                          'FORGOT PASSWORD?',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
                         onPressed: () async {
+                          setState(() {
+                            forgetPassClick = true;
+                          });
+                          loginFormKey.currentState.validate();
                           final authServiceProvider =
                               Provider.of<AuthService>(context, listen: false);
                           try {
@@ -299,24 +313,15 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           }
                         },
-                        child: Text(
-                          'FORGOT PASSWORD?',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
                       ),
                       SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
                       PrimaryButton(
-                        btnText: "Login",
-                        onPressed: () async {
-                          validateAndLogin(context);
-                          // Navigator.pushNamed(context, "/setProfile");
-                        },
-                      ),
+                          btnText: "Login",
+                          onPressed: () async {
+                            validateAndLogin(context);
+                          }),
                       SizedBox(
                         height: 20,
                       ),
@@ -332,11 +337,6 @@ class _LoginPageState extends State<LoginPage> {
                                   await authServiceProvider.signInWithGoogle();
                               await _createFirebaseDocument(authUser);
                               print("Users Logged In");
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_context) => HomePage()),
-                              );
                               print("login successful");
                             } catch (signUpError) {
                               print(signUpError);
@@ -362,9 +362,12 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
+          ),
 
-            // SignUp Section
-            AnimatedContainer(
+          // SignUp Section
+          Form(
+            key: signUpFormKey,
+            child: AnimatedContainer(
                 padding: EdgeInsets.all(32),
                 curve: Curves.fastLinearToSlowEaseIn,
                 duration: Duration(milliseconds: 1000),
@@ -391,16 +394,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         )
                       ],
-                    ),
-                    InputWithIcon(
-                      btnIcon: Icons.account_circle_rounded,
-                      hintText: "Name",
-                      myController: nameController,
-                      keyboardType: TextInputType.name,
-                      validateFunc: (val) {
-                        if (val.isEmpty) return 'Name Required';
-                        return null;
-                      },
                     ),
                     SizedBox(
                       height: 20,
@@ -500,16 +493,27 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ],
-                ))
-          ],
-        ),
+                )),
+          )
+        ],
       ),
     );
   }
 
-  // Checking Submission from the Form
-  bool validateAndSave() {
-    final form = formKey.currentState;
+  // Checking Submission from the login Form
+  bool loginAndValidate() {
+    final form = loginFormKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // Checking Submission from the login Form
+  bool signUpAndValidate() {
+    final form = signUpFormKey.currentState;
     if (form.validate()) {
       form.save();
       return true;
@@ -522,16 +526,12 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSignUp(BuildContext _context) async {
     final authServiceProvider =
         Provider.of<AuthService>(_context, listen: false);
-    if (validateAndSave()) {
+    if (signUpAndValidate()) {
       try {
         var authUser = await authServiceProvider.createUser(
             emailController.text, passwordController.text, nameController.text);
         await _createFirebaseDocument(authUser);
         print("Sign Up Successful!");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_context) => HomePage()),
-        );
       } catch (e) {
         print(e);
         showDialog(
@@ -563,17 +563,13 @@ class _LoginPageState extends State<LoginPage> {
     final authServiceProvider =
         Provider.of<AuthService>(_context, listen: false);
     final authService = authServiceProvider.getCurrentUser();
-    if (validateAndSave()) {
+    if (loginAndValidate()) {
+      print("Validation Successful");
       try {
-        var authUser = await authService.signInWithEmailPassword(
+        await authService.signInWithEmailPassword(
             emailController.text, passwordController.text);
-        await _createFirebaseDocument(authUser);
         print("Sign In Successful!");
-        // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_context) => HomePage()),
-        );
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
       } catch (e) {
         print(e);
         showDialog(
@@ -607,7 +603,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!docSnapshot.exists) {
         var photo_url = authUser.photoUrl ??
             "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
-        usersRef
+        await usersRef
             .set({
               "name": authUser.displayName,
               "email": authUser.email,
@@ -625,70 +621,12 @@ class _LoginPageState extends State<LoginPage> {
           "emails": FieldValue.arrayUnion([authUser.email]),
           "phones": FieldValue.arrayUnion([authUser.displayName]),
           "names": FieldValue.arrayUnion([phoneController.text]),
+          "photo_urls": FieldValue.arrayUnion([authUser.photoUrl]),
         });
+
+        Navigator.pushNamedAndRemoveUntil(context, "/setProfile", (route) => false);
       }
     });
-  }
-}
-
-class InputWithIcon extends StatefulWidget {
-  final IconData btnIcon;
-  final String hintText;
-  final TextEditingController myController;
-  final String Function(String) validateFunc;
-  final bool obscure;
-  final TextInputType keyboardType;
-  InputWithIcon({
-    this.btnIcon,
-    this.hintText,
-    this.myController,
-    this.validateFunc,
-    this.obscure,
-    this.keyboardType,
-  });
-
-  @override
-  _InputWithIconState createState() => _InputWithIconState();
-}
-
-class _InputWithIconState extends State<InputWithIcon> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300, width: 2),
-          borderRadius: BorderRadius.circular(50)),
-      child: Row(
-        children: <Widget>[
-          Container(
-              width: 60,
-              child: Icon(
-                widget.btnIcon,
-                size: 20,
-                color: Colors.grey.shade500,
-              )),
-          Expanded(
-            child: SizedBox(
-              height: 50,
-              child: TextFormField(
-                decoration: InputDecoration(
-                    errorStyle: TextStyle(
-                      fontSize: 9,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    border: InputBorder.none,
-                    hintText: widget.hintText),
-                autocorrect: false,
-                controller: widget.myController,
-                validator: widget.validateFunc,
-                obscureText: widget.obscure ?? false,
-                keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
