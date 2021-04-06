@@ -90,12 +90,8 @@ class SearchUsers extends SearchDelegate {
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              contentPadding: EdgeInsets.all(8),
-                              leading: CircleAvatar(
-                                radius: 30,
-                                backgroundImage:
-                                    NetworkImage(photo_urls[namesList[index]]),
-                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                              leading: Icon(Icons.star_border_purple500_sharp, color: Colors.black87, size: 30,),
                               title: RichText(
                                 text: TextSpan(
                                   text: names[namesList[index]],
@@ -105,7 +101,7 @@ class SearchUsers extends SearchDelegate {
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              subtitle: Text("Tap to add user",
+                              subtitle: Text("Lets get talking!",
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12),

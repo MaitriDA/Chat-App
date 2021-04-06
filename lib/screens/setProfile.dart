@@ -13,15 +13,11 @@ class SetProfile extends StatefulWidget {
 class _SetProfileState extends State<SetProfile> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection("Users");
+  FirebaseFirestore.instance.collection("Users");
 
   TextEditingController nameController = TextEditingController();
 
-  final formKey = GlobalKey<FormState>();
-
-  String photoUrl = "noprofile.png";
-
-  String userName;
+  String photoUrl;
 
   List avatars = [
     "avatar1.jpg",
@@ -35,6 +31,7 @@ class _SetProfileState extends State<SetProfile> {
   @override
   Widget build(BuildContext context) {
     final authUser = Provider.of<AuthService>(context).currentUser();
+    var userRef = FirebaseFirestore.instance.collection("Users");
     return Scaffold(
       appBar: AppBar(
         elevation: 8,
@@ -50,12 +47,11 @@ class _SetProfileState extends State<SetProfile> {
             icon: Icon(Icons.check),
             onPressed: () async {
 
-              var userRef = FirebaseFirestore.instance.collection("Users");
-              await firebaseAuth.currentUser.updateProfile(displayName: nameController.text ,photoURL: photoUrl);
-              // Update authUser's photoUrl
-              await userRef.doc(authUser.email).update({
-                "photo_url": photoUrl,
-              });
+              await firebaseAuth.currentUser.updateProfile(photoURL: photoUrl);
+              // // Update authUser's photoUrl
+              // await userRef.doc(authUser.email).update({
+              //   "photo_url": photoUrl,
+              // });
 
               // Update authUser's photoUrl for others
               await userRef
@@ -80,7 +76,7 @@ class _SetProfileState extends State<SetProfile> {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -98,28 +94,24 @@ class _SetProfileState extends State<SetProfile> {
                   // backgroundImage: _pickedImage == null
                   //     ? AssetImage("assets/images/noprofile.png")
                   //     : FileImage(File(_pickedImage.path))
-                  backgroundImage: AssetImage("assets/images/" + photoUrl),
+                  backgroundImage: AssetImage("assets/images/" + authUser.photoUrl),
                 ),
               ),
-              Form(
-                key: formKey,
-                child: InputWithIcon(
-                  btnIcon: Icons.account_circle_rounded,
-                  hintText: authUser.displayName,
-                  myController: nameController,
-                  keyboardType: TextInputType.name,
-                  validateFunc: (value) async {
-                    var docRef = await FirebaseFirestore.instance.collection("Users").doc("allusers").get();
-                    var docData = docRef.data();
-                    if(docData["names"].contains)
-                    if (value.isEmpty) return 'Name Required';
-                    return null;
-                  },
+              TextButton(
+                onPressed: (){},
+                child: Text(
+                  authUser.displayName??"username",
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      letterSpacing: 1,
+                      fontSize: 18,
+                  height: 2),
                 ),
               ),
+              SizedBox(height: 15,),
               Center(
                 child: Text(
-                  "AVATARS",
+                  "CHOOSE AN AVATAR",
                   style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       letterSpacing: 1,
@@ -127,17 +119,26 @@ class _SetProfileState extends State<SetProfile> {
                       height: 5),
                 ),
               ),
+              SizedBox(
+                height: 15,
+              ),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 3,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 50,
+                  mainAxisSpacing: 25,
                   children: List.generate(avatars.length, (index) {
                     return GestureDetector(
                       onTap: () async {
                         setState(() {
                           photoUrl = avatars[index];
                         });
+                        await firebaseAuth.currentUser.updateProfile(photoURL: photoUrl);
+                        // Update authUser's photoUrl
+                        await userRef.doc(authUser.email).update({
+                          "photo_url": photoUrl,
+                        });
+                        setState((){});
                       },
                       child: Container(
                         decoration: new BoxDecoration(
@@ -150,11 +151,33 @@ class _SetProfileState extends State<SetProfile> {
                         child: CircleAvatar(
                           radius: 35.0,
                           backgroundImage:
-                              AssetImage("assets/images/" + avatars[index]),
+                          AssetImage("assets/images/" + avatars[index]),
                         ),
                       ),
                     );
                   }),
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    photoUrl = "noprofile.png";
+                  });
+                  await firebaseAuth.currentUser.updateProfile(photoURL: photoUrl);
+                  // Update authUser's photoUrl
+                  await userRef.doc(authUser.email).update({
+                    "photo_url": photoUrl,
+                  });
+                  setState((){});
+                },
+                child: Center(
+                  child: Text(
+                    "OR REMOVE AVATAR",
+                    style: TextStyle(
+                        color: Colors.red,
+                        letterSpacing: 1,
+                        fontSize: 12,),
+                  ),
                 ),
               ),
             ],

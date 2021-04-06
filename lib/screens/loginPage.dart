@@ -1,10 +1,10 @@
 import 'package:baatein/authentication/authService.dart';
-import 'package:baatein/utils/inputWithIcon.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'homePage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // Declaring Necessary Variables
   int _pagestate = 0;
-  bool forgetPassClick = false;
+
   final loginFormKey = GlobalKey<FormState>();
   final signUpFormKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
@@ -237,9 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                         myController: passwordController,
                         obscure: true,
                         validateFunc: (value) {
-                          if (forgetPassClick) {
-                            return null;
-                          } else if (value.isEmpty) {
+                          if (value.isEmpty) {
                             return "Enter Password";
                           } else if (value.length < 6) {
                             return "Password should be atleast 6 characters!";
@@ -248,20 +246,9 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       TextButton(
-                        child: Text(
-                          'FORGOT PASSWORD?',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
                         onPressed: () async {
-                          setState(() {
-                            forgetPassClick = true;
-                          });
-                          loginFormKey.currentState.validate();
                           final authServiceProvider =
-                              Provider.of<AuthService>(context, listen: false);
+                          Provider.of<AuthService>(context, listen: false);
                           try {
                             await authServiceProvider
                                 .sendPasswordResetEmail(emailController.text);
@@ -313,15 +300,23 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           }
                         },
+                        child: Text(
+                          'FORGOT PASSWORD?',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 50,
                       ),
                       PrimaryButton(
                           btnText: "Login",
-                          onPressed: () async {
+                          onPressed: ()async{
                             validateAndLogin(context);
-                          }),
+                          }
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -330,13 +325,18 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () async {
                             // Signing the User with Google
                             final authServiceProvider =
-                                Provider.of<AuthService>(context,
-                                    listen: false);
+                            Provider.of<AuthService>(context,
+                                listen: false);
                             try {
                               var authUser =
-                                  await authServiceProvider.signInWithGoogle();
+                              await authServiceProvider.signInWithGoogle();
                               await _createFirebaseDocument(authUser);
                               print("Users Logged In");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_context) => HomePage()),
+                              );
                               print("login successful");
                             } catch (signUpError) {
                               print(signUpError);
@@ -385,7 +385,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: <Widget>[
                         Container(
                           margin:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                          EdgeInsets.symmetric(horizontal: 0, vertical: 20),
                           child: Text(
                             "Create a New Account",
                             style: TextStyle(
@@ -395,8 +395,24 @@ class _LoginPageState extends State<LoginPage> {
                         )
                       ],
                     ),
+                    InputWithIcon(
+                      btnIcon: Icons.account_circle_rounded,
+                      hintText: "Full Name",
+                      myController: nameController,
+                      keyboardType: TextInputType.name,
+                      validateFunc: (val) {
+                        String pattern = r'^[a-zA-Z]+[\s]+[a-zA-Z]+$';
+                        RegExp regExp = new RegExp(pattern);
+                        if (val.length == 0) {
+                          return 'Name Required';
+                        } else if (!regExp.hasMatch(val)) {
+                          return 'Format: first-name space last-name';
+                        }
+                        return null;
+                      },
+                    ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     InputWithIcon(
                       btnIcon: Icons.phone,
@@ -415,7 +431,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     InputWithIcon(
                       btnIcon: Icons.email_outlined,
@@ -432,7 +448,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     InputWithIcon(
                       btnIcon: Icons.vpn_key,
@@ -449,7 +465,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     InputWithIcon(
                         btnIcon: Icons.vpn_key,
@@ -525,13 +541,15 @@ class _LoginPageState extends State<LoginPage> {
   // SignUp
   void validateAndSignUp(BuildContext _context) async {
     final authServiceProvider =
-        Provider.of<AuthService>(_context, listen: false);
+    Provider.of<AuthService>(_context, listen: false);
     if (signUpAndValidate()) {
       try {
         var authUser = await authServiceProvider.createUser(
             emailController.text, passwordController.text, nameController.text);
         await _createFirebaseDocument(authUser);
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
         print("Sign Up Successful!");
+
       } catch (e) {
         print(e);
         showDialog(
@@ -560,16 +578,20 @@ class _LoginPageState extends State<LoginPage> {
 
   // logging In
   void validateAndLogin(BuildContext _context) async {
-    final authServiceProvider =
-        Provider.of<AuthService>(_context, listen: false);
+    final authServiceProvider = Provider.of<AuthService>(_context, listen: false);
     final authService = authServiceProvider.getCurrentUser();
     if (loginAndValidate()) {
       print("Validation Successful");
       try {
-        await authService.signInWithEmailPassword(
+        var authUser = await authService.signInWithEmailPassword(
             emailController.text, passwordController.text);
+        await _createFirebaseDocument(authUser);
         print("Sign In Successful!");
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_context) => HomePage()),
+        );
       } catch (e) {
         print(e);
         showDialog(
@@ -596,23 +618,24 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+
+
   Future<void> _createFirebaseDocument(UserCredentials authUser) async {
     final usersRef =
-        FirebaseFirestore.instance.collection('Users').doc(authUser.email);
+    FirebaseFirestore.instance.collection('Users').doc(authUser.email);
     usersRef.get().then((docSnapshot) async {
       if (!docSnapshot.exists) {
-        var photo_url = authUser.photoUrl ??
-            "https://firebasestorage.googleapis.com/v0/b/baatein-85a8d.appspot.com/o/noprofile.png?alt=media&token=15abddd9-a7ca-4271-9ba4-b531173c2429";
+        var photo_url = "noprofile.png";
         await usersRef
             .set({
-              "name": authUser.displayName,
-              "email": authUser.email,
-              "phone": phoneController.text,
-              "photo_url": photo_url
-            })
+          "name": authUser.displayName,
+          "email": authUser.email,
+          "phone": phoneController.text,
+          "photo_url": photo_url
+        })
             .then((value) => print("User's Document Added"))
             .catchError((error) =>
-                print("Failed to add user: $error")); // create the document
+            print("Failed to add user: $error")); // create the document
 
         await FirebaseFirestore.instance
             .collection('Users')
@@ -623,10 +646,70 @@ class _LoginPageState extends State<LoginPage> {
           "names": FieldValue.arrayUnion([phoneController.text]),
           "photo_urls": FieldValue.arrayUnion([authUser.photoUrl]),
         });
-
-        Navigator.pushNamedAndRemoveUntil(context, "/setProfile", (route) => false);
       }
     });
+    return 'finished';
+  }
+}
+
+class InputWithIcon extends StatefulWidget {
+  final IconData btnIcon;
+  final String hintText;
+  final TextEditingController myController;
+  final String Function(String) validateFunc;
+  final bool obscure;
+  final TextInputType keyboardType;
+  InputWithIcon({
+    this.btnIcon,
+    this.hintText,
+    this.myController,
+    this.validateFunc,
+    this.obscure,
+    this.keyboardType,
+  });
+
+  @override
+  _InputWithIconState createState() => _InputWithIconState();
+}
+
+class _InputWithIconState extends State<InputWithIcon> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300, width: 2),
+          borderRadius: BorderRadius.circular(50)),
+      child: Row(
+        children: <Widget>[
+          Container(
+              width: 60,
+              child: Icon(
+                widget.btnIcon,
+                size: 20,
+                color: Colors.grey.shade500,
+              )),
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: TextFormField(
+                decoration: InputDecoration(
+                    errorStyle: TextStyle(
+                      fontSize: 9,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    border: InputBorder.none,
+                    hintText: widget.hintText),
+                autocorrect: false,
+                controller: widget.myController,
+                validator: widget.validateFunc,
+                obscureText: widget.obscure ?? false,
+                keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -652,9 +735,9 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         padding: EdgeInsets.all(15),
         child: Center(
             child: Text(
-          widget.btnText,
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        )),
+              widget.btnText,
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            )),
       ),
     );
   }
@@ -678,9 +761,9 @@ class _OutlineBtnState extends State<OutlineBtn> {
       padding: EdgeInsets.all(15),
       child: Center(
           child: Text(
-        widget.btnText,
-        style: TextStyle(color: Color(0xFFB1E4155), fontSize: 16),
-      )),
+            widget.btnText,
+            style: TextStyle(color: Color(0xFFB1E4155), fontSize: 16),
+          )),
     );
   }
 }

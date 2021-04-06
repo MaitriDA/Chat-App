@@ -57,15 +57,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         child: CircleAvatar(
-                          radius: 70.0,
-                          backgroundImage:AssetImage("assets/images/" +  authUser.currentUser().photoUrl),
+                            radius: 70.0,
+                            backgroundImage: AssetImage("assets/images/" + authUser.currentUser().photoUrl),
                         ),
                       ),
                       Container(
                         padding:
-                        EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                         child: Text(
-                          authUser.currentUser().displayName,
+                          authUser.currentUser().displayName ?? "username",
                           style: TextStyle(
                             letterSpacing: 2,
                           ),
@@ -96,7 +96,8 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => ToDoList1()),
+                              MaterialPageRoute(
+                                  builder: (context) => ToDoList1()),
                             );
                           },
                           leading: Icon(Icons.star_border),
@@ -222,7 +223,8 @@ class _HomePageState extends State<HomePage> {
                           .toString();
                       final DateTime docDateTime = DateTime.parse(timestamp);
                       time = DateFormat("dd MMM HH:mm").format(docDateTime);
-                      var message = usersList[index]["last_message"]["message"].toString();
+                      var message = usersList[index]["last_message"]["message"]
+                          .toString();
                       text = message;
                     }
                     final Message chat = Message(
@@ -247,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                       child: ListTile(
                         leading: Container(
                           decoration:
-                          BoxDecoration(shape: BoxShape.circle, boxShadow: [
+                              BoxDecoration(shape: BoxShape.circle, boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 1,
@@ -257,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                           child: CircleAvatar(
                             radius: 30,
                             backgroundImage:
-                            NetworkImage(usersList[index]["photo_url"]),
+                                NetworkImage(usersList[index]["photo_url"]),
                           ),
                         ),
                         title: Text(
