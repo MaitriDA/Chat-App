@@ -21,8 +21,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     final authUser = Provider.of<AuthService>(context).getCurrentUser();
     final user = Provider.of<AuthService>(context).currentUser();
+    print(authUser.currentUser().photoUrl);
+    print(authUser.currentUser().displayName);
+    print(authUser.currentUser().email);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -60,6 +64,7 @@ class _HomePageState extends State<HomePage> {
                         child: CircleAvatar(
                             radius: 70.0,
                             backgroundImage: AssetImage("assets/images/" + authUser.currentUser().photoUrl),
+                          // backgroundImage: AssetImage("assets/images/noprofile.png"),
                         ),
                       ),
                       Container(
@@ -109,21 +114,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         ListTile(
-                          leading: Icon(Icons.color_lens_outlined),
-                          title: Text(
-                            'Theme',
-                            style: TextStyle(
-                                letterSpacing: 1, color: Colors.black54),
-                          ),
+                          leading: Icon(Icons.screen_share_outlined),
+                          title: Text('Our Web App',
+                              style: TextStyle(
+                                  letterSpacing: 1,
+                                  color: Colors.black54
+                              )),
                         ),
-                        // ListTile(
-                        //   leading: Icon(Icons.screen_share_outlined),
-                        //   title: Text('Our Web App',
-                        //       style: TextStyle(
-                        //           letterSpacing: 1,
-                        //           color: Colors.black54
-                        //       )),
-                        // ),
                         ListTile(
                           onTap: () {
                             Navigator.push(
@@ -266,8 +263,9 @@ class _HomePageState extends State<HomePage> {
                           ]),
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundImage:
-                                NetworkImage(usersList[index]["photo_url"]),
+                            backgroundImage: AssetImage("assets/images/" + usersList[index]["photo_url"]),
+                            // backgroundImage:
+                            //     NetworkImage(usersList[index]["photo_url"]),
                           ),
                         ),
                         title: Text(

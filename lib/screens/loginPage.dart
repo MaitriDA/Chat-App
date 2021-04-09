@@ -587,11 +587,19 @@ class _LoginPageState extends State<LoginPage> {
             emailController.text, passwordController.text);
         await _createFirebaseDocument(authUser);
         print("Sign In Successful!");
+        CircularProgressIndicator();
         // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_context) => HomePage()),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (_context) => HomePage()),
+        // );
+        Future.delayed(Duration(seconds: 5), () {
+          // 5s over, navigate to a new page
+          Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_context) => HomePage()),
+              );
+        });
       } catch (e) {
         print(e);
         showDialog(
@@ -625,13 +633,12 @@ class _LoginPageState extends State<LoginPage> {
     FirebaseFirestore.instance.collection('Users').doc(authUser.email);
     usersRef.get().then((docSnapshot) async {
       if (!docSnapshot.exists) {
-        var photo_url = "noprofile.png";
         await usersRef
             .set({
           "name": authUser.displayName,
           "email": authUser.email,
           "phone": phoneController.text,
-          "photo_url": photo_url
+          "photo_url": authUser.photoUrl,
         })
             .then((value) => print("User's Document Added"))
             .catchError((error) =>
@@ -642,8 +649,8 @@ class _LoginPageState extends State<LoginPage> {
             .doc("allusers")
             .update({
           "emails": FieldValue.arrayUnion([authUser.email]),
-          "phones": FieldValue.arrayUnion([authUser.displayName]),
-          "names": FieldValue.arrayUnion([phoneController.text]),
+          "phones": FieldValue.arrayUnion([phoneController.text]),
+          "names": FieldValue.arrayUnion([authUser.displayName]),
           "photo_urls": FieldValue.arrayUnion([authUser.photoUrl]),
         });
       }

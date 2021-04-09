@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class SetProfile extends StatefulWidget {
   @override
@@ -13,11 +14,10 @@ class SetProfile extends StatefulWidget {
 class _SetProfileState extends State<SetProfile> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CollectionReference usersCollection =
-  FirebaseFirestore.instance.collection("Users");
-
+      FirebaseFirestore.instance.collection("Users");
   TextEditingController nameController = TextEditingController();
-
   String photoUrl;
+  double _progress = 0;
 
   List avatars = [
     "avatar1.jpg",
@@ -27,6 +27,21 @@ class _SetProfileState extends State<SetProfile> {
     "avatar5.jpg",
     "avatar6.jpg",
   ];
+
+  void startTimer() {
+    new Timer.periodic(
+      Duration(milliseconds: 70),
+      (Timer timer) => setState(
+        () {
+          if (_progress == 1) {
+            timer.cancel();
+          } else {
+            _progress += 0.2;
+          }
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +61,6 @@ class _SetProfileState extends State<SetProfile> {
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-
               await firebaseAuth.currentUser.updateProfile(photoURL: photoUrl);
               // // Update authUser's photoUrl
               // await userRef.doc(authUser.email).update({
@@ -91,22 +105,25 @@ class _SetProfileState extends State<SetProfile> {
                 ),
                 child: CircleAvatar(
                   radius: 100.0,
-                  // backgroundImage: _pickedImage == null
-                  //     ? AssetImage("assets/images/noprofile.png")
-                  //     : FileImage(File(_pickedImage.path))
-                  backgroundImage: AssetImage("assets/images/" + authUser.photoUrl),
+                  backgroundImage:
+                      AssetImage("assets/images/" + authUser.photoUrl),
+                  // backgroundImage: AssetImage("assets/images/noprofile.png"),
                 ),
               ),
-              TextButton(
-                onPressed: (){},
-                child: Text(
-                  authUser.displayName??"username",
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      letterSpacing: 1,
-                      fontSize: 18,
-                  height: 2),
-                ),
+              Text(
+                authUser.displayName ?? "username",
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    letterSpacing: 1,
+                    fontSize: 18,
+                    height: 2),
+              ),
+              SizedBox(height: 20,),
+              LinearProgressIndicator(
+                minHeight: 1,
+                backgroundColor: Colors.black12,
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.black54),
+                value: _progress,
               ),
               SizedBox(height: 15,),
               Center(
@@ -116,7 +133,7 @@ class _SetProfileState extends State<SetProfile> {
                       color: Theme.of(context).primaryColor,
                       letterSpacing: 1,
                       fontSize: 12,
-                      height: 5),
+                      height: 3),
                 ),
               ),
               SizedBox(
@@ -131,14 +148,20 @@ class _SetProfileState extends State<SetProfile> {
                     return GestureDetector(
                       onTap: () async {
                         setState(() {
+                          _progress = 0;
                           photoUrl = avatars[index];
                         });
-                        await firebaseAuth.currentUser.updateProfile(photoURL: photoUrl);
+                        startTimer();
+                        await firebaseAuth.currentUser
+                            .updateProfile(photoURL: photoUrl);
                         // Update authUser's photoUrl
                         await userRef.doc(authUser.email).update({
                           "photo_url": photoUrl,
                         });
-                        setState((){});
+                        setState(() {
+                          _progress = 0;
+                        });
+                        setState(() {});
                       },
                       child: Container(
                         decoration: new BoxDecoration(
@@ -151,7 +174,7 @@ class _SetProfileState extends State<SetProfile> {
                         child: CircleAvatar(
                           radius: 35.0,
                           backgroundImage:
-                          AssetImage("assets/images/" + avatars[index]),
+                              AssetImage("assets/images/" + avatars[index]),
                         ),
                       ),
                     );
@@ -161,22 +184,29 @@ class _SetProfileState extends State<SetProfile> {
               GestureDetector(
                 onTap: () async {
                   setState(() {
+                    _progress = 0;
                     photoUrl = "noprofile.png";
                   });
-                  await firebaseAuth.currentUser.updateProfile(photoURL: photoUrl);
+                  startTimer();
+                  await firebaseAuth.currentUser
+                      .updateProfile(photoURL: photoUrl);
                   // Update authUser's photoUrl
                   await userRef.doc(authUser.email).update({
                     "photo_url": photoUrl,
                   });
-                  setState((){});
+                  setState(() {
+                    _progress = 0;
+                  });
+                  setState(() {});
                 },
                 child: Center(
                   child: Text(
                     "OR REMOVE AVATAR",
                     style: TextStyle(
-                        color: Colors.red,
-                        letterSpacing: 1,
-                        fontSize: 12,),
+                      color: Colors.red,
+                      letterSpacing: 1,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ),
