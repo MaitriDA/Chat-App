@@ -1,4 +1,5 @@
 import 'package:baatein/authentication/authService.dart';
+import 'package:baatein/screens/aboutUs.dart';
 import 'package:baatein/screens/todo-screen1.dart';
 import 'package:baatein/utils/dataSearch.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -124,6 +125,13 @@ class _HomePageState extends State<HomePage> {
                         //       )),
                         // ),
                         ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AboutUs()),
+                            );
+                          },
                           leading: Icon(Icons.privacy_tip_outlined),
                           title: Text(
                             'About Us',
