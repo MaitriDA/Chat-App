@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'package:baatein/authentication/authService.dart';
+import 'package:baatein/screens/splash.dart';
 import 'package:baatein/utils/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'homePage.dart';
+import 'splash.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -381,11 +384,11 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
                           margin:
-                          EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                          EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                           child: Text(
                             "Create a New Account",
                             style: TextStyle(
@@ -411,9 +414,6 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       },
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     InputWithIcon(
                       btnIcon: Icons.phone,
                       hintText: "Phone",
@@ -430,9 +430,6 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       },
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     InputWithIcon(
                       btnIcon: Icons.email_outlined,
                       hintText: "Email",
@@ -447,9 +444,6 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       },
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     InputWithIcon(
                       btnIcon: Icons.vpn_key,
                       hintText: "Password",
@@ -463,9 +457,6 @@ class _LoginPageState extends State<LoginPage> {
                         }
                         return null;
                       },
-                    ),
-                    SizedBox(
-                      height: 10,
                     ),
                     InputWithIcon(
                         btnIcon: Icons.vpn_key,
@@ -482,7 +473,7 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         }),
                     SizedBox(
-                      height: 60,
+                      height: 100,
                     ),
                     GestureDetector(
                       child: PrimaryButton(
@@ -490,11 +481,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       onTap: () async {
                         validateAndSignUp(context);
-                        // Navigator.pushNamed(context, "/setProfile");
                       },
-                    ),
-                    SizedBox(
-                      height: 20,
                     ),
                     GestureDetector(
                       onTap: () {
@@ -539,7 +526,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // SignUp
-  void validateAndSignUp(BuildContext _context) async {
+  Future<void> validateAndSignUp(BuildContext _context) async {
     final authServiceProvider =
     Provider.of<AuthService>(_context, listen: false);
     if (signUpAndValidate()) {
@@ -547,9 +534,12 @@ class _LoginPageState extends State<LoginPage> {
         var authUser = await authServiceProvider.createUser(
             emailController.text, passwordController.text, nameController.text);
         await _createFirebaseDocument(authUser);
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
         print("Sign Up Successful!");
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_context) => SplashScreenPage()),
+        );
       } catch (e) {
         print(e);
         showDialog(
@@ -587,19 +577,11 @@ class _LoginPageState extends State<LoginPage> {
             emailController.text, passwordController.text);
         await _createFirebaseDocument(authUser);
         print("Sign In Successful!");
-        CircularProgressIndicator();
         // Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (_context) => HomePage()),
-        // );
-        Future.delayed(Duration(seconds: 5), () {
-          // 5s over, navigate to a new page
-          Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_context) => HomePage()),
-              );
-        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_context) => HomePage()),
+        );
       } catch (e) {
         print(e);
         showDialog(

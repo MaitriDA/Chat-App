@@ -27,6 +27,12 @@ class _HomePageState extends State<HomePage> {
     print(authUser.currentUser().photoUrl);
     print(authUser.currentUser().displayName);
     print(authUser.currentUser().email);
+
+    // if(authUser.currentUser().photoUrl == null || authUser.currentUser().displayName == null){
+    //   authUser.currentUser().photoUrl = "noprofile.png";
+    //   authUser.currentUser().displayName = "You";
+    // }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -63,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: CircleAvatar(
                             radius: 70.0,
-                            backgroundImage: AssetImage("assets/images/" + authUser.currentUser().photoUrl),
+                            backgroundImage: AssetImage("assets/images/" + authUser.currentUser().photoUrl ?? "noprofile.png"),
                           // backgroundImage: AssetImage("assets/images/noprofile.png"),
                         ),
                       ),
@@ -113,14 +119,14 @@ class _HomePageState extends State<HomePage> {
                                 letterSpacing: 1, color: Colors.black54),
                           ),
                         ),
-                        ListTile(
-                          leading: Icon(Icons.screen_share_outlined),
-                          title: Text('Our Web App',
-                              style: TextStyle(
-                                  letterSpacing: 1,
-                                  color: Colors.black54
-                              )),
-                        ),
+                        // ListTile(
+                        //   leading: Icon(Icons.screen_share_outlined),
+                        //   title: Text('Our Web App',
+                        //       style: TextStyle(
+                        //           letterSpacing: 1,
+                        //           color: Colors.black54
+                        //       )),
+                        // ),
                         ListTile(
                           onTap: () {
                             Navigator.push(
